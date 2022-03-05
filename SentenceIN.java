@@ -50,6 +50,7 @@ public class SentenceIN {
 	public static void main(String[] args) {
 		Scanner kb = new Scanner(System.in);
 		Scanner inputStream = null;
+		int x;
 		PrintWriter outputStream = null;
 		//wouldn't it be eaasier to use an ArrayList<MusicNote> ?
 		MusicNote list_of_notes[] = new MusicNote[5];// (5 only there for testing) get size of message later
