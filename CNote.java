@@ -4,9 +4,9 @@ public class CNote extends MusicNote{
     //private boolean Gclef; //notes above 'middle c' (melody or not) already declared in 'MusicNote'
     // private String path = " Notes/key01.mp3"; already declared in 'MusicNote'
 
-    public CNote(int n, String l, boolean g, String p){
+    public CNote(int o, String l, boolean g, String p){
         
-    	super(n,l,g,p);
+    	super(o,l,g,p);
     	super.y_coord = 298;
     	super.uy_coord = 48;
     	//supersetlabel("C")

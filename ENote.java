@@ -6,9 +6,9 @@ public class ENote extends MusicNote{
     // private String path = " Notes/key01.mp3"; already declared in 'MusicNote'
 
 
-    public ENote(int n, String l, boolean g, String p){
+    public ENote(int o, String l, boolean g, String p){
         
-    	super(n,l,g,p);
+    	super(o,l,g,p);
     	super.y_coord = 281;
     	super.uy_coord = 31;
     	//supersetlabel("C")

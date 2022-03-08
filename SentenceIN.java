@@ -204,14 +204,23 @@ ImageIcon i_whole = new ImageIcon(whole_url);
 URL half_url = SentenceIN.class.getResource("/half_note.png");
 ImageIcon i_half = new ImageIcon(half_url);
 
+URL u_half_url = SentenceIN.class.getResource("/u_half_note.png");
 //JComponent for rhythm note "quarter"
 URL quarter_url = SentenceIN.class.getResource("/quarter_note.png");
 ImageIcon i_quarter = new ImageIcon(quarter_url);
 
+URL u_quarter_url = SentenceIN.class.getResource("/u_quarter_note.png");
 //JComponent for rhythm note "eighth"
+URL eighth_url = SentenceIN.class.getResource("/eighth_note2.png");
+ImageIcon i_eighth = new ImageIcon(eighth_url);
+
+URL u_eighth_url = SentenceIN.class.getResource("/u_eighth_note2.png");
+/*
 URL eighth_url = SentenceIN.class.getResource("/eighth_note.png");
 ImageIcon i_eighth = new ImageIcon(eighth_url);
 
+URL u_eighth_url = SentenceIN.class.getResource("/u_eighth_note.png");
+*/
 URL ts1 = SentenceIN.class.getResource("/ts_1.png");
 URL ts2 = SentenceIN.class.getResource("/ts_2.png");
 URL ts3 = SentenceIN.class.getResource("/ts_3.png");
@@ -334,7 +343,7 @@ generate_music_button.addActionListener(new ActionListener() {
 		
 			//creating note objs
 			MusicNote list_of_notes [] = MusicNote.getNotes(Newmessage);
-		
+			
 			int x_coord = 260;
 			//int tx_coord = 0;
 			int y_xtra = 0;
@@ -532,7 +541,7 @@ generate_music_button.addActionListener(new ActionListener() {
 			            try {
 			            	
 							png_measure = ImageIO.read(e_measure_url);
-							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, quarter_url, eighth_url,ts);
+							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, u_half_url, quarter_url, u_quarter_url, eighth_url, u_eighth_url,ts);
 
 							//ImageIO.write(png_measure, "jpg", new File(e_measure_url.toString()));
 							
@@ -923,7 +932,7 @@ public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, int ts
 	case "quarter": 
 	{
 		
-		x_coord = x_coord + 6 * ts_condition;	
+		x_coord = x_coord + 7 * ts_condition;	
 		int [] info = {3, x_coord, (note.getuy_coord() - 40),20,60};
 		return info;
 		
@@ -932,7 +941,8 @@ public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, int ts
 	case "eighth": 
 	{
 		x_coord = x_coord + 1 * ts_condition;
-		int [] info= {4, x_coord,(note.getuy_coord() - 40),40,60};
+		//int [] info= {4, x_coord,(note.getuy_coord() - 40),40,60};
+		int [] info= {4, x_coord,(note.getuy_coord() - 40),20,60};
 		return info;
 		//break;
 		
@@ -1162,7 +1172,7 @@ public static BufferedImage joinBufferedImageVertically(BufferedImage img1, Buff
 	    return newImage;
 	  }
 //add notes to a bufferimage of an empty measure
-public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m, URL whole_url, URL half_url, URL quarter_url, URL eighth_url, TimeSignature ts) throws IOException
+public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m, URL whole_url, URL half_url,URL u_half_url, URL quarter_url, URL u_quarter_url,URL eighth_url, URL u_eighth_url, TimeSignature ts) throws IOException
 {
 	BufferedImage img_result = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
 	Graphics2D g = (Graphics2D) img_result.getGraphics();
@@ -1195,37 +1205,69 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 		
 	int [] result = setMeasureBufferedImage(note, x_coord, ts_condition);
 	
+	
 	switch(result [0])
 	{
 		case 1:
 		{
 		bi_note = ImageIO.read(whole_url);
+		//prev_x_coord = result[1] - x_coord;
 		break;
 		}
 		case 2:
 		{
-		bi_note = ImageIO.read(half_url);
+		if(note.getoctave() < 5)
+		{
+			bi_note = ImageIO.read(u_half_url);
+			result[2] = result[2] + 40; //when image is flipped, ycoord needs to be adjusted
+		}
+		else
+		{
+			bi_note = ImageIO.read(half_url);
+		}
+		//prev_x_coord = result[1] - x_coord;
 		break;
 		}
 		case 3:
 		{
-		bi_note = ImageIO.read(quarter_url);
+		if(note.getoctave() < 5)
+		{
+			bi_note = ImageIO.read(u_quarter_url);
+			result[2] = result[2] + 40; //when image is flipped, ycoord needs to be adjusted
+		}
+		else
+		{
+			bi_note = ImageIO.read(quarter_url);
+		}
+		//prev_x_coord = result[1] - x_coord;
 		break;
 		}
 		case 4:
 		{
-		bi_note = ImageIO.read(eighth_url);
+		if(note.getoctave() < 5)
+		{
+			bi_note = ImageIO.read(u_eighth_url);
+			result[2] = result[2] + 40; //when image is flipped, ycoord needs to be adjusted
+			//result[1] = result[1] - 20; //cuz 8th note is 40 wide (double other notes width)
+			//prev_x_coord = result[1] - x_coord +20;
+		}
+		else
+		{
+			bi_note = ImageIO.read(eighth_url);
+			//prev_x_coord = result[1] - x_coord;
+		}
 		break;
 		}
-		default: bi_note = ImageIO.read(eighth_url); break; //shouldn't happen
+		default: bi_note = ImageIO.read(eighth_url); prev_x_coord = result[1] - x_coord; break; //shouldn't happen
 	}
 	
 	prev_x_coord = result[1] - x_coord;
 	x_coord = result[1];
+	
 	g.drawImage(bi_note, x_coord, result[2], result[3], result[4], null);
 	
 	x_coord = x_coord + prev_x_coord + 20; //additional 20 is to account for the width of the note
-	
+
 	}
 	
 	File outputfile = new File("img_result.png"); //idk if i like this

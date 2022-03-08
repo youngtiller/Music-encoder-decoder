@@ -6,9 +6,9 @@ public class BNote extends MusicNote{
     // private String path = " Notes/key01.mp3"; already declared in 'MusicNote'
 
 
-    public BNote(int n, String l, boolean g, String p){
+    public BNote(int o, String l, boolean g, String p){
         
-    	super(n,l,g,p);
+    	super(o,l,g,p);
     	super.y_coord = 307;
     	super.uy_coord = 57;
     	//supersetlabel("C")

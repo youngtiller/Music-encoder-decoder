@@ -13,9 +13,9 @@ public class ANote extends MusicNote {
     //private boolean Gclef; //notes above 'middle c' (melody or not) already declared in 'MusicNote'
     // private String path = " Notes/key01.mp3"; already declared in 'MusicNote'
 
-    public ANote(int n, String l, boolean g, String p){
+    public ANote(int o, String l, boolean g, String p){
         
-    	super(n,l,g,p);
+    	super(o,l,g,p);
     	super.y_coord = 315;
     	super.uy_coord = 65;
     	//supersetlabel("C")

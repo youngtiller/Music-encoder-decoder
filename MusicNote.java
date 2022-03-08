@@ -5,7 +5,7 @@ abstract class MusicNote implements Comparable<MusicNote>{
     
 	// Attributes
 
-	private int note_id; 
+	private int octave; //this is gonna mean octave 
     private String label; //What type the note is (ex. 'A' OR 'G')
     private boolean Gclef; //notes above 'middle c' (melody or not)
     private String path;// = " Notes/key01.mp3";
@@ -16,9 +16,9 @@ abstract class MusicNote implements Comparable<MusicNote>{
     
     protected int uy_coord; //new (for putting coordinates on music sheet)
     //Constructor
-    public MusicNote (int n, String l, boolean g, String p)
+    public MusicNote (int o, String l, boolean g, String p)
     {
-    	note_id = n;
+    	octave = o;
     	label = l;
     	Gclef = g;
     	path = p;
@@ -27,8 +27,8 @@ abstract class MusicNote implements Comparable<MusicNote>{
     //Methods
     
     //getter
-    public int getnote_id(){
-        return note_id;
+    public int getoctave(){
+        return octave;
     }
     
     public String getpath(){
@@ -62,8 +62,8 @@ abstract class MusicNote implements Comparable<MusicNote>{
     public void setid(int id){
         this.id= id;
     }
-    public void setnote_id(int note_id){
-        this.note_id= note_id;
+    public void setoctave(int o){
+        this.octave= o;
     }
     public void setlabel(String label){
         this.label= label;
@@ -88,13 +88,13 @@ abstract class MusicNote implements Comparable<MusicNote>{
     for (int i = 0; i < Newmessage.size(); i++)
     {
         if(Newmessage.get(i) == 'a' || Newmessage.get(i) ==  'A'){
-            list_of_notes[i]= new ANote(1,"a",true," Notes/key01.mp3");
+            list_of_notes[i]= new ANote(5,"a",true," Notes/key01.mp3");
         }
         else if(Newmessage.get(i) == 'b' || Newmessage.get(i) == 'B'){
-            list_of_notes[i]= new BNote(2,"b", true," Notes/key01.mp3");
+            list_of_notes[i]= new BNote(5,"b", true," Notes/key01.mp3");
         }
         else if(Newmessage.get(i) == 'c' || Newmessage.get(i) == 'C'){
-            list_of_notes[i]= new CNote(3,"c",true," Notes/key01.mp3");
+            list_of_notes[i]= new CNote(4,"c",true," Notes/key01.mp3");
 
         }
         else if(Newmessage.get(i) == 'd' || Newmessage.get(i) ==  'D'){
@@ -102,14 +102,14 @@ abstract class MusicNote implements Comparable<MusicNote>{
 
         }
         else if(Newmessage.get(i) == 'e' || Newmessage.get(i) ==  'E'){
-            list_of_notes[i]= new ENote(5,"e",true," Notes/key01.mp3");
+            list_of_notes[i]= new ENote(4,"e",true," Notes/key01.mp3");
 
         }
         else if(Newmessage.get(i) ==  'f' || Newmessage.get(i) == 'F'){
-            list_of_notes[i]= new FNote(6,"f",true," Notes/key01.mp3");
+            list_of_notes[i]= new FNote(4,"f",true," Notes/key01.mp3");
         }
         else if(Newmessage.get(i) == 'g' || Newmessage.get(i) == 'G'){
-            list_of_notes[i]= new GNote(7,"g",true," Notes/key01.mp3");
+            list_of_notes[i]= new GNote(5,"g",true," Notes/key01.mp3");
 
         }
         else if(Newmessage.get(i) ==  'h' || Newmessage.get(i) == 'H'){
@@ -219,7 +219,7 @@ abstract class MusicNote implements Comparable<MusicNote>{
    //necessary for testing
    public String toString()
    {
-	   return "Note_id: " + this.note_id + " Label: " + this.label + " Rhythm: " + this.rhythm + "\n";
+	   return "Note_id: " + this.octave + " Octave: " + this.label + " Rhythm: " + this.rhythm + "\n";
    }
     
 }
