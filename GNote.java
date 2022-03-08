@@ -9,6 +9,7 @@ public class GNote extends MusicNote{
         
     	super(n,l,g,p);
     	super.y_coord = 325;
+    	super.uy_coord = 75;
     	//supersetlabel("C")
         //super.id++;
         //this.Gclef = g;

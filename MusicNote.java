@@ -13,6 +13,8 @@ abstract class MusicNote implements Comparable<MusicNote>{
     private String rhythm; //whole,half,quarter, eighth
     
     protected int y_coord; //new (for putting coordinates on music sheet)
+    
+    protected int uy_coord; //new (for putting coordinates on music sheet)
     //Constructor
     public MusicNote (int n, String l, boolean g, String p)
     {
@@ -50,6 +52,10 @@ abstract class MusicNote implements Comparable<MusicNote>{
     public int gety_coord()
     {
     	return y_coord;
+    }
+    public int getuy_coord()
+    {
+    	return uy_coord;
     }
     
     //setter

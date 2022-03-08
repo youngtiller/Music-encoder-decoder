@@ -10,6 +10,7 @@ public class BNote extends MusicNote{
         
     	super(n,l,g,p);
     	super.y_coord = 307;
+    	super.uy_coord = 57;
     	//supersetlabel("C")
         //super.id++;
         //this.Gclef = g;

@@ -1,9 +1,12 @@
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
@@ -17,7 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -27,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -36,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
+import javax.swing.border.EmptyBorder;
 
 //import sun.audio.AudioPlayer;
 
@@ -75,9 +82,16 @@ public class SentenceIN {
 	//changed to static
 	public static ArrayList<Character> Newmessage = new ArrayList<Character>();
 	
+	//for appending buffered images
+	public static ArrayList<BufferedImage> bi_measures = new ArrayList<BufferedImage>();
 	//save sheet counter (necessary to uniquely name files
 	public static int ss_counter = 0;
 	
+	//needed for clearing music
+	public static JPanel measures_panel = new JPanel();
+	
+	//for display music sheet
+	public static JScrollPane s_pane = new JScrollPane(); 
 	//needed for screen capture
 	public static BufferedImage b_image; 
 	/*{
@@ -145,7 +159,10 @@ panel.setBackground(Color.darkGray);
 //needed to clear notes 
 ArrayList<JLabel> notes = new ArrayList<JLabel>();
 
+measures_panel.setSize(2000,300); //testing
+measures_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
+TimeSignature ts = new TimeSignature(4.0,4.0); //currently hard coded
 
 //record creation modal
 JInternalFrame i_frame = new JInternalFrame("Record", false, true);
@@ -164,6 +181,12 @@ new_record_button.setBounds(30,350,200, 30);
 
 i_frame.add(i_panel);
 i_frame.setVisible(false);
+
+//JComponent first jlabel for measures_panel
+URL ts_url = SentenceIN.class.getResource("/clef_and_time_signature.png");
+ImageIcon i_ts = new ImageIcon(ts_url);
+JLabel ts_l = new JLabel(i_ts); //new changed to static variable
+ts_l.setSize(90,300);
 
 
 //JComponent for music sheet (needs to be added first to be first layer(back layer)
@@ -189,6 +212,15 @@ ImageIcon i_quarter = new ImageIcon(quarter_url);
 URL eighth_url = SentenceIN.class.getResource("/eighth_note.png");
 ImageIcon i_eighth = new ImageIcon(eighth_url);
 
+URL ts1 = SentenceIN.class.getResource("/ts_1.png");
+URL ts2 = SentenceIN.class.getResource("/ts_2.png");
+URL ts3 = SentenceIN.class.getResource("/ts_3.png");
+URL ts4 = SentenceIN.class.getResource("/ts_4.png");
+URL ts5 = SentenceIN.class.getResource("/ts_5.png");
+URL ts6 = SentenceIN.class.getResource("/ts_6.png");
+URL ts7 = SentenceIN.class.getResource("/ts_7.png");
+URL ts8 = SentenceIN.class.getResource("/ts_8.png");
+URL ts9 = SentenceIN.class.getResource("/ts_9.png");
 
 // JComponent to accept user input (for newmessage)
 JTextField userInput = new JTextField("");
@@ -208,7 +240,6 @@ generate_music_button.setBounds(30,300,200, 30);
 //clears music being displayed
 JButton clear_music_button = new JButton("Clear Music");
 clear_music_button.setBounds(30,250,200, 30);
-
 
 //update existing record
 JButton update_record_button = new JButton("Update Record"); 
@@ -310,7 +341,7 @@ generate_music_button.addActionListener(new ActionListener() {
 			int [] coords;
 			//randomly assigning rhythm to notes (half,whole, quarter, etc.)
 			Random r = new Random();
-		
+			/*
 			for(int count2 = 0;count2 < list_of_notes.length; count2++)
 				{
 					//needed for when the first 4 bars/frames are filled
@@ -328,25 +359,286 @@ generate_music_button.addActionListener(new ActionListener() {
 							tx_coord = 0;
 							y_xtra = 170;
 						}
-					 */
+					 
 			
 					coords = getRandomRhythm(r, list_of_notes, count2, x_coord, y_xtra, notes, panel, i_whole, i_half, i_quarter, i_eighth);
 					//coords = getRandomRhythm(r, list_of_notes, count2, tx_coord, y_xtra, notes, panel, i_whole, i_half, i_quarter, i_eighth);
 					
 					x_coord = coords [0];
 					y_xtra = coords [1];
-					/*
-					tx_coord = coords [0];
-					y_xtra = coords [1];
-					*/
+					
+					//tx_coord = coords [0];
+					//y_xtra = coords [1];
+					
 				}
-		
+				*/
+					
+					ArrayList<Measure> measures = new ArrayList<Measure>();
+					
+					//sets all rhythms
+					for(int count2 = 0;count2 < list_of_notes.length; count2++)
+					{
+						getRandomRhythm(r,list_of_notes,count2, ts);
+					}
+					
+					double measure_beat_count = 0.0;
+					double current_note_beat = 0.0;
+					int measure_count = 0;
+					double num_beats_per_measure = ts.gettop_number();
+					double bottom_number = ts.getbottom_number(); //base rhythm that counts as a beat
+					Measure m = new Measure();
+					measures.add(m);
+					System.out.println("Time Signature: " + num_beats_per_measure + "/" + bottom_number);
+					for(int count2 = 0;count2 < list_of_notes.length; count2++)
+					{
+						
+					switch(list_of_notes[count2].getrhythm())
+						{
+						case "whole":
+							{	
+								current_note_beat = bottom_number;
+								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/4
+					
+								break;
+							}
+						case "half":
+							{
+								current_note_beat = bottom_number/2.0;
+								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/4
+								
+								break;
+							}
+						case "quarter":
+							{
+								current_note_beat = bottom_number/4.0;
+								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/4
+								
+								break;
+							}
+						case "eighth":
+							{
+								current_note_beat = bottom_number/8.0;
+								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/4
+								
+								break;
+							}
+						}
+					
+					if(measure_beat_count <= num_beats_per_measure)
+					{
+						//add note to current bar
+						measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						System.out.println("Within measure: " + measure_beat_count);
+					}
+					else if(measures.size() == 1 && measures.get(0).getnotes().size() == 0) //first measure
+					{
+						//add note to first measure
+						measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						//create new bar
+						Measure m1 = new Measure();
+						//add bar to bars
+						measures.add(m1);
+						//add to measure count
+						measure_count++;
+						//set counts
+						measure_beat_count = current_note_beat; //should set to correct amount of beats the note has
+						System.out.println("New first measure: " + measure_beat_count);
+					}
+					else 
+					{
+						
+						measure_count++;
+						
+						//create new bar
+						Measure m1 = new Measure();
+						//add bar to bars
+						measures.add(m1);
+						//add note to new bar
+						measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						//set counts
+						measure_beat_count = current_note_beat; //should set to correct amount of beats the note has
+						System.out.println("New measure: " + measure_beat_count);
+					}
+					
+					
+					
+						//if(x_coord >= 950)
+							//{
+							//	x_coord = 350;
+							//	y_xtra = 170;
+					
+							//}
+						/*
+				
+						if(tx_coord >= 700)
+							{
+								tx_coord = 0;
+								y_xtra = 170;
+							}
+						 */
+				
+						//coords = get_setRandomRhythm(r, list_of_notes, count2, x_coord, y_xtra, notes, panel, i_whole, i_half, i_quarter, i_eighth);
+						//coords = getRandomRhythm(r, list_of_notes, count2, tx_coord, y_xtra, notes, panel, i_whole, i_half, i_quarter, i_eighth);
+						
+						//x_coord = coords [0];
+						//y_xtra = coords [1];
+						/*
+						tx_coord = coords [0];
+						y_xtra = coords [1];
+						*/
+					}
+			
+					//print out all bars
+					URL e_measure_url = SentenceIN.class.getResource("/empty_measure.png");
+					BufferedImage png_measure;
+					BufferedImage measure_w_notes;
+					
+					String str ="Sheet :\n";
+					BufferedImage measure_w_ts;
+					BufferedImage png_ts;
+					
+					EmptyBorder e_border = new EmptyBorder(0,0,0,0);
+					
+					ImageIcon i_w_ts;
+					JLabel jl_w_ts;
+					try {
+						png_ts = ImageIO.read(ts_url);
+						try {
+							
+							measure_w_ts = addTSToClef(png_ts, ts, ts1,ts2,ts3,ts4,ts5,ts6,ts7,ts8,ts9);
+							System.out.println("ts was added graphically\n");
+							ts.setimg(measure_w_ts);
+							i_w_ts = new ImageIcon(measure_w_ts);
+							jl_w_ts = new JLabel(i_w_ts);
+							jl_w_ts.setBorder(e_border);
+							//jl_m.setBounds(0,0,2000,300);
+							jl_w_ts.setSize(90,300);
+							measures_panel.add(jl_w_ts);//adding clef and time signature
+							
+						} catch (IOException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}
+					} catch (IOException e3) {
+						// TODO Auto-generated catch block
+						e3.printStackTrace();
+					}
+				
+					ImageIcon i_m;
+					JLabel jl_m;
+					
+			    	for (Measure m1 : measures) {
+			            str = str + m1;
+			            try {
+			            	
+							png_measure = ImageIO.read(e_measure_url);
+							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, quarter_url, eighth_url,ts);
+
+							//ImageIO.write(png_measure, "jpg", new File(e_measure_url.toString()));
+							
+							bi_measures.add(measure_w_notes); //may be redundant
+							
+							i_m = new ImageIcon(measure_w_notes);
+							jl_m = new JLabel(i_m);
+							jl_m.setBorder(e_border);
+							//jl_m.setBounds(0,0,2000,300);
+							jl_m.setSize(175,300);
+							measures_panel.add(jl_m);
+							System.out.println("added measure to arraylist\n");
+							
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+			        }
+			 	   System.out.println(str);
+			 	   
+			 	   	measures_panel.setVisible(true);
+					measures_panel.repaint();
+					
+					//s_pane = new JScrollPane(measures_panel);
+					s_pane.setViewportView(measures_panel);
+					s_pane.setBounds(x,y,700,300);
+					
+					s_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+					s_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+					s_pane.setVisible(true);
+					
+					panel.add(s_pane);
 	
 			}
-		panel.add(music_sheet);
+		try {
+			setToJpg(frame, music_sheet, w, h, ts);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} //sets buffered image
+		/*
+		//b_image
+		//File file = new File("pics/generated_music_sheet.png");
+		File file = new File("pics/generated_music_sheet.png");
+		try {
+			ImageIO.write(b_image, "png", file);
+			System.out.println("Image written when generated");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		URL p_m_sheet_url = SentenceIN.class.getResource("/generated_music_sheet.png");
+		
+		ImageIcon p_m_sheet;
+		try {
+			p_m_sheet = new ImageIcon(file.toURI().toURL());
+			//ImageIcon p_m_sheet = new ImageIcon(p_m_sheet_url);
+			JLabel p_music_sheet_l = new JLabel(p_m_sheet);
+			//i may have to set size (i can do ths based upon the amount of measures)
+			
+	        
+			JPanel p = new JPanel();
+			p.setSize(1000,300);
+			
+			p_music_sheet_l.setBounds(0,0,2000,300);
+			p.add(p_music_sheet_l);
+			/*
+			JLabel music_sheet2 = new JLabel(i_m_sheet);
+			music_sheet2.setBounds(0,0,700,300);
+			p.add(music_sheet2);
+			JLabel music_sheet3 = new JLabel(i_m_sheet);
+			music_sheet3.setBounds(700,0,700,300);
+			p.add(music_sheet3);
+			
+			
+			
+			
+			JScrollPane s_pane = new JScrollPane(p);
+			s_pane.setBounds(x,y,700,300);
+			//s_pane.setBounds(x,y,w,h);
+			//s_pane.setLocation(x,y);
+/*
+			JViewport vp = new JViewport();
+			//Dimension vp_size = new Dimension(w/2, h);
+			Dimension vp_size = new Dimension(200, 300);
+			vp.setViewSize(vp_size);
+			vp.setViewPosition(new Point(0, 0));
+			
+			s_pane.setViewport(vp);
+			
+			s_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			s_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+			s_pane.setVisible(true);
+			panel.add(s_pane);
+			
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		*/
+		//panel.add(music_sheet);
+		
+		System.out.println("Components in panel: " + measures_panel.getComponentCount());
 		panel.repaint();
 		
-		setToJpg(frame, music_sheet, w, h); //sets buffered image
+		
 		//frame.setVisible(true);
 	}
 	
@@ -362,10 +654,15 @@ clear_music_button.addActionListener(new ActionListener() {
 		}
 		notes.clear();
 		Newmessage.clear();
+		bi_measures.clear();
+		measures_panel.removeAll();
+		measures_panel.revalidate();
+		measures_panel.repaint();
 		
 	}
 });
 
+//generate music + save file will be sufficient (don't need this button)
 new_record_button.addActionListener(new ActionListener() {
 	
 	public void actionPerformed(ActionEvent e)
@@ -431,7 +728,12 @@ save_sheet_button.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e)
 	{
 		
-		setToJpg(frame, music_sheet, w, h); //sets buffered image
+		try {
+			setToJpg(frame, music_sheet, w, h, ts);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} //sets buffered image
 		/*
 		i_panel.removeAll();
 		
@@ -468,7 +770,7 @@ save_sheet_button.addActionListener(new ActionListener() {
 				System.out.println("Saving file");
 				String file_location = save_file.getSelectedFile().getAbsolutePath()+ name_input;
 				//String filename = save_file.getSelectedFile().getName();
-				saveToJpg( b_image, file_location);
+				saveToJpg(b_image, file_location);
 				}
 		} 
 		else if (fc_result == JFileChooser.CANCEL_OPTION) 
@@ -488,8 +790,8 @@ exit_button.addActionListener(new ActionListener() {
 	}
 });
 }
-
-public static int [] getRandomRhythm (Random r, MusicNote [] list_of_notes, int count2, int x_coord, int y_xtra, ArrayList<JLabel> notes, JPanel panel, ImageIcon i_whole, ImageIcon i_half, ImageIcon i_quarter, ImageIcon i_eighth )
+//not in current use
+public static int [] get_setRandomRhythm (Random r, MusicNote [] list_of_notes, int count2, int x_coord, int y_xtra, ArrayList<JLabel> notes, JPanel panel, ImageIcon i_whole, ImageIcon i_half, ImageIcon i_quarter, ImageIcon i_eighth )
 {
 	
 	int random = r.nextInt(4);//0-3(inclusive)
@@ -591,11 +893,109 @@ public static int [] getRandomRhythm (Random r, MusicNote [] list_of_notes, int 
 
 }
 
+/* return: 
+ * int array should always be of size 5: 
+ * arr [0] (type of note)
+ * arr [1] (x_coord)
+ * arr [2] (y_coord)
+ * arr [3] (width)
+ * arr [4] (length)
+ */
+public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, int ts_condition)
+{
+	
+	switch(note.getrhythm())
+	{
+	case "whole": 
+	{	
+		x_coord = x_coord + 38 * ts_condition;
+		int [] info = {1,x_coord,note.getuy_coord(),20,20};
+		return info;
+	}
+	
+	case "half": 
+	{
+		x_coord = x_coord + 17 * ts_condition;
+		int [] info= {2,x_coord,(note.getuy_coord() - 40),20,60};
+		return info;
+	
+	}
+	case "quarter": 
+	{
+		
+		x_coord = x_coord + 6 * ts_condition;	
+		int [] info = {3, x_coord, (note.getuy_coord() - 40),20,60};
+		return info;
+		
+	}
+		
+	case "eighth": 
+	{
+		x_coord = x_coord + 1 * ts_condition;
+		int [] info= {4, x_coord,(note.getuy_coord() - 40),40,60};
+		return info;
+		//break;
+		
+	}
+	default: { int [] info= {1,2,3,4,5}; return info; } //case shouldn't happen
+ }
+
+}
+
+
+public static void getRandomRhythm (Random r, MusicNote [] list_of_notes, int count2, TimeSignature ts)
+{
+	int ts_condition;
+	if(ts.gettop_number() * 2 == ts.getbottom_number()) // means no whole notes
+	{
+		ts_condition = 3;
+	}
+	else
+	{
+		ts_condition = 4;
+	}
+	int random = r.nextInt(ts_condition);//0- (ts_condition -1) (inclusive)
+	switch(random)
+	{
+	case 0: 
+		{
+		list_of_notes [count2].setrhythm("eighth");
+		System.out.println(list_of_notes[count2]);
+		break;
+		}
+	
+	case 1: 
+		{
+		list_of_notes[count2].setrhythm("quarter");
+		System.out.println(list_of_notes[count2]);
+		break;
+		}
+	case 2: 
+		{
+		list_of_notes[count2].setrhythm("half");
+		System.out.println(list_of_notes[count2]);	
+		break;
+		}
+		
+	case 3: 
+		{
+		list_of_notes [count2].setrhythm("whole");
+		System.out.println(list_of_notes[count2]);
+		break;	
+		}
+	default: //case shouldn't happen
+		{ 
+		break;
+	
+		} 
+	}
+
+}
 
 
 
-//used to save note populated music sheet to jpg
-public static void setToJpg(JFrame frame, JLabel music_sheet, int w, int h)
+// not in current use
+public static void setToSSJpg(JFrame frame, JLabel music_sheet, int w, int h)
 {
 	System.out.println("load button pressed");
 	Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -622,6 +1022,91 @@ public static void setToJpg(JFrame frame, JLabel music_sheet, int w, int h)
 		System.out.println("exception caught");
 	}
 }
+//used to save note populated music sheet to jpg
+/*image file should be made in the format of n amount of rows with 
+ * 4 columns (bufferedImage measures) each. If not given an amount 
+ * of measures divisible by 4, populate the rest of the row with an empty
+ * measure bufferedimage.
+ * had to surround all function calls with try/catch
+ */
+public static void setToJpg(JFrame frame, JLabel music_sheet, int w, int h, TimeSignature ts) throws IOException
+{
+	URL e_measure_url = SentenceIN.class.getResource("/empty_measure.png");
+	BufferedImage empty_measure = ImageIO.read(e_measure_url);
+	
+	URL e_ts_url = SentenceIN.class.getResource("/clef_and_time_signature.png");
+	BufferedImage empty_ts = ImageIO.read(e_ts_url);
+	
+	ArrayList<BufferedImage> phrases = new ArrayList<BufferedImage>();
+		b_image = ts.getimg();
+		int measure_count = bi_measures.size();
+		System.out.println("measure size " + measure_count + "\n");
+		int phrase_count = measure_count/4; //remainder is truncated		
+		
+		//should group all measures into phrases
+		for(int count = 0; count < phrase_count; count ++)
+		{
+			if(count == 0)
+			{
+				b_image = ts.getimg();
+			}
+			else
+			{
+				b_image = empty_ts; 
+			}
+			
+			for(int count2 = 0; count2 < 4; count2 ++)
+			{
+				
+				b_image = joinBufferedImageHorizontally(b_image, bi_measures.get(count2 + 4*count));
+			}
+			phrases.add(b_image);
+			b_image = null;
+		}
+		//adding measures in the last phrase
+		if(measure_count != phrase_count*4) //bc truncated
+		{
+			int xtra_measures = measure_count - phrase_count*4;
+			b_image = empty_ts;
+			/*
+			b_image = bi_measures.get(phrase_count);
+			if(measure_count - phrase_count != 1)
+			{
+				for(int count3 = 1; count3 < xtra_measures; count3 ++) //iterates max twice  
+				{
+					
+					b_image = joinBufferedImage(b_image, bi_measures.get(phrase_count+count3),1);
+				}
+			}
+			*/
+			for(int count3 = 0; count3 < xtra_measures; count3 ++) //iterates max twice  
+				{
+					
+					b_image = joinBufferedImageHorizontally(b_image, bi_measures.get(measure_count-xtra_measures+count3));
+				}
+		
+			for(int count4 = 0; count4 < Math.abs(xtra_measures - 4); count4 ++) //iterates max thrice  
+			{
+				
+				b_image = joinBufferedImageHorizontally(b_image, empty_measure);
+			}
+			phrases.add(b_image);
+			//b_image = null;
+		}
+		//testing
+		b_image = phrases.get(0);
+		for(int count5 = 1; count5 < phrases.size(); count5++)
+		{
+			b_image = joinBufferedImageVertically(b_image, phrases.get(count5));
+			System.out.println("adding phrase " + count5+ " and " + (count5 + 1) + "\n");
+		}
+		
+		/*
+		for (BufferedImage buf_image : bi_measures) { 		      
+	           b_image = joinBufferedImage(b_image, buf_image);
+		}
+		*/
+}
 
 //used to save note populated music sheet to jpg
 public static void saveToJpg(BufferedImage bi, String file_location)
@@ -631,7 +1116,7 @@ public static void saveToJpg(BufferedImage bi, String file_location)
 		File outputfile = new File(file_location);
 			
 		try {
-			ImageIO.write(bi, "jpg", outputfile);
+			ImageIO.write(bi, "png", outputfile);
 			System.out.println("image should have been created");
 			} 
 		catch (IOException e) 
@@ -643,7 +1128,209 @@ public static void saveToJpg(BufferedImage bi, String file_location)
 }
 
 
+public static BufferedImage joinBufferedImageHorizontally(BufferedImage img1, BufferedImage img2) 
+{
+	    int offset = 0;
+	    int width = img1.getWidth() + img2.getWidth() + offset;
+	    int height = Math.max(img1.getHeight(), img2.getHeight()) + offset;
+	    BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g = newImage.createGraphics();
+	    Color oldColor = g.getColor();
+	    g.setPaint(Color.BLACK);
+	    g.fillRect(0, 0, width, height);
+	    g.setColor(oldColor);
+	    g.drawImage(img1, null, 0, 0);
+	    g.drawImage(img2, null, img1.getWidth() + offset, 0);
+	    g.dispose();
+	    return newImage;
+	  }
+
+public static BufferedImage joinBufferedImageVertically(BufferedImage img1, BufferedImage img2) 
+{
+	    int offset = 0;
+	    int height = img1.getHeight() + img2.getHeight() + offset;
+	    int width = Math.max(img1.getWidth(), img2.getWidth()) + offset;
+	    BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g = newImage.createGraphics();
+	    Color oldColor = g.getColor();
+	    g.setPaint(Color.BLACK);
+	    g.fillRect(0, 0, width, height);
+	    g.setColor(oldColor);
+	    g.drawImage(img1, null, 0, 0); 
+	    g.drawImage(img2, null, 0, img1.getHeight() + offset);
+	    g.dispose();
+	    return newImage;
+	  }
+//add notes to a bufferimage of an empty measure
+public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m, URL whole_url, URL half_url, URL quarter_url, URL eighth_url, TimeSignature ts) throws IOException
+{
+	BufferedImage img_result = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	Graphics2D g = (Graphics2D) img_result.getGraphics();
+	g.drawImage(original, 0, 0, null);
+	
+	int [] coords;
+	int x_coord = 0;
+	int prev_x_coord;
+	BufferedImage bi_note;
+	
+	int ts_condition; 
+	if( ts.gettop_number() / ts.getbottom_number() ==  0.5)
+	{
+		ts_condition = 4;
+		System.out.println("ts = 4\n");
+	}
+	else if( ts.gettop_number() / ts.getbottom_number() ==  0.5 && (int)ts.gettop_number() % (int)ts.getbottom_number() == 0.0)
+	{
+		ts_condition = 1;
+		System.out.println("ts = 1\n");
+	}
+	else
+	{
+		ts_condition = 2; 
+		System.out.println("ts = 2\n");
+	}
+	for (MusicNote note : m.getnotes()) 
+	{ 		      
+        //function to find out where the location of the note need to be and 
+		
+	int [] result = setMeasureBufferedImage(note, x_coord, ts_condition);
+	
+	switch(result [0])
+	{
+		case 1:
+		{
+		bi_note = ImageIO.read(whole_url);
+		break;
+		}
+		case 2:
+		{
+		bi_note = ImageIO.read(half_url);
+		break;
+		}
+		case 3:
+		{
+		bi_note = ImageIO.read(quarter_url);
+		break;
+		}
+		case 4:
+		{
+		bi_note = ImageIO.read(eighth_url);
+		break;
+		}
+		default: bi_note = ImageIO.read(eighth_url); break; //shouldn't happen
+	}
+	
+	prev_x_coord = result[1] - x_coord;
+	x_coord = result[1];
+	g.drawImage(bi_note, x_coord, result[2], result[3], result[4], null);
+	
+	x_coord = x_coord + prev_x_coord + 20; //additional 20 is to account for the width of the note
+	
+	}
+	
+	File outputfile = new File("img_result.png"); //idk if i like this
+	ImageIO.write(img_result, "png", outputfile);
+	img_result = ImageIO.read(outputfile);
+	g.dispose();
+	return img_result;
+}
+
+//add time signature to a bufferimage of clef notes at the beginning of the music sheet
+public static BufferedImage addTSToClef(BufferedImage original, TimeSignature ts, URL ts1, URL ts2, URL ts3,URL ts4,URL ts5,URL ts6,URL ts7,URL ts8,URL ts9) throws IOException
+{
+	BufferedImage img_result = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	Graphics2D g = (Graphics2D) img_result.getGraphics();
+	g.drawImage(original, 0, 0, null);
+	
+	int x_coord = 50;
+	int t_ycoord = 30;
+	int b_ycoord = 75;
+	int width = 40;
+	BufferedImage top_number;
+	BufferedImage bottom_number;
+	//BufferedImage line;
+	//add top number
+	int t_num = (int) ts.gettop_number();
+	
+	if(t_num == 1)
+	{
+		width = 20;
+	}
+	top_number = bufImgSetter(t_num, ts1, ts2, ts3, ts4, ts5, ts6, ts7, ts8, ts9);
+
+	g.drawImage(top_number, x_coord, t_ycoord, width, 40, null);
+	//add line (divisor line)
+	
+	//add bottom number if we want
+	
+	width = 40;
+	
+	int b_num = (int) ts.getbottom_number();
+	
+	if(b_num == 1)
+	{
+		width = 20;
+	}
+	bottom_number = bufImgSetter(b_num, ts1, ts2, ts3, ts4, ts5, ts6, ts7, ts8, ts9);
+	
+	g.drawImage(bottom_number, x_coord, b_ycoord, width, 40, null);
+	
+	File outputfile = new File("ts_img_result.png"); //idk if i like this
+	ImageIO.write(img_result, "png", outputfile);
+	img_result = ImageIO.read(outputfile);
+	g.dispose();
+	return img_result;
+}
+
+public static BufferedImage bufImgSetter(int condition, URL ts1, URL ts2, URL ts3,URL ts4,URL ts5,URL ts6,URL ts7,URL ts8,URL ts9) throws IOException
+{
+	BufferedImage img;
+	
+	switch(condition)
+	{
+	case 1:
+	{
+	img = ImageIO.read(ts1);return img;
+	}
+	case 2:
+	{
+	img = ImageIO.read(ts2);return img;
+	}
+	case 3:
+	{
+	img = ImageIO.read(ts3);return img;
+	}
+	case 4:
+	{
+	img = ImageIO.read(ts4);return img;
+	}
+	case 5:
+	{
+	img = ImageIO.read(ts5);return img;
+	}
+	case 6:
+	{
+	img = ImageIO.read(ts6);return img;
+	}
+	case 7:
+	{
+	img = ImageIO.read(ts7);return img;
+	}
+	case 8:
+	{
+	img = ImageIO.read(ts8);return img;
+	}
+	case 9:
+	{
+	img = ImageIO.read(ts9);return img;
+	}
+	
+	default: img = ImageIO.read(ts1); return img; //shouldn't happen
+}
+}
 //used to dynamically create a string to call the saved file of music sheet
+//not in current use
+
 public static String fileNamer()
 {
 	return "music_sheet_sc" + ss_counter + ".jpg";

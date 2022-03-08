@@ -9,6 +9,7 @@ public class FNote extends MusicNote{
         
     	super(n,l,g,p);
     	super.y_coord = 271;
+    	super.uy_coord = 21;
     	//supersetlabel("C")
         //super.id++;
         //this.Gclef = g;

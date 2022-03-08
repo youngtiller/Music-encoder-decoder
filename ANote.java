@@ -17,6 +17,7 @@ public class ANote extends MusicNote {
         
     	super(n,l,g,p);
     	super.y_coord = 315;
+    	super.uy_coord = 65;
     	//supersetlabel("C")
         //super.id++;
         //this.Gclef = g;
