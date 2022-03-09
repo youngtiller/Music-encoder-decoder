@@ -12,6 +12,9 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -145,6 +148,8 @@ public class SentenceIN {
 public static void startGraphics(JFrame frame, JPanel panel)
 {
 
+Thread play_stop = Thread.currentThread();
+
 frame.setName("Music Encoder");
 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 frame.setSize(1000, 800);
@@ -158,6 +163,8 @@ panel.setBackground(Color.darkGray);
 
 //needed to clear notes 
 ArrayList<JLabel> notes = new ArrayList<JLabel>();
+
+int tempo = 1; // used for playback speed of music sheet (currently hard-coded)
 
 measures_panel.setSize(2000,300); //testing
 measures_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -267,6 +274,15 @@ load_button.setBounds(30,500,200, 30);
 JButton save_sheet_button = new JButton("Save JPEG of Music Sheet");
 save_sheet_button.setBounds(30,550,200, 30);
 
+//play music button
+JButton play_button = new JButton("Play");
+play_button.setBounds(350,600,200, 30);
+play_button.setVisible(false); //invisible when until music generated
+
+//stop music button
+JButton stop_button = new JButton("Stop");
+stop_button.setBounds(600,600,200, 30);
+stop_button.setVisible(false); //invisible when until music generated
 //exit (idk if neccessary)
 JButton exit_button = new JButton("Exit");
 exit_button.setForeground(Color.red);
@@ -300,6 +316,8 @@ panel.add(update_record_button);
 //panel.add(save_button);
 panel.add(load_button);
 panel.add(save_sheet_button);
+panel.add(play_button);
+panel.add(stop_button);
 panel.add(exit_button);
 
 
@@ -553,6 +571,9 @@ generate_music_button.addActionListener(new ActionListener() {
 							//jl_m.setBounds(0,0,2000,300);
 							jl_m.setSize(175,300);
 							measures_panel.add(jl_m);
+							
+							measures_panel.setAutoscrolls(true);
+							 
 							System.out.println("added measure to arraylist\n");
 							
 						} catch (IOException e1) {
@@ -643,7 +664,8 @@ generate_music_button.addActionListener(new ActionListener() {
 		}
 		*/
 		//panel.add(music_sheet);
-		
+		play_button.setVisible(true);
+		stop_button.setVisible(true);
 		System.out.println("Components in panel: " + measures_panel.getComponentCount());
 		panel.repaint();
 		
@@ -667,6 +689,8 @@ clear_music_button.addActionListener(new ActionListener() {
 		measures_panel.removeAll();
 		measures_panel.revalidate();
 		measures_panel.repaint();
+		play_button.setVisible(false);
+		stop_button.setVisible(false);
 		
 	}
 });
@@ -790,6 +814,34 @@ save_sheet_button.addActionListener(new ActionListener() {
 		
 	}
 });
+//autoscrolls jscrollpane from what the current view is (not the best solution)
+play_button.addActionListener(new ActionListener() {
+	
+	public void actionPerformed(ActionEvent e)
+	{
+		Rectangle r;
+		
+		int end = 90 + (bi_measures.size()*175);
+		for(int x = (int)s_pane.getViewport().getViewRect().getX(); x < end; x += tempo)
+				{
+			 r = new Rectangle(x,0, 1, 1);
+			measures_panel.scrollRectToVisible(r);
+				}
+	}
+});
+
+//can't be called during a play_button actionperformed method
+stop_button.addActionListener(new ActionListener() {
+	
+	public void actionPerformed(ActionEvent e)
+	{
+		int x = (int)s_pane.getViewport().getViewRect().getX();
+		Rectangle r = new Rectangle(x,0, 1, 1);
+		measures_panel.scrollRectToVisible(r);
+	}
+});
+
+
 
 exit_button.addActionListener(new ActionListener() {
 	
