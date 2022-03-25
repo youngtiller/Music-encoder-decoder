@@ -169,7 +169,7 @@ int tempo = 1; // used for playback speed of music sheet (currently hard-coded)
 measures_panel.setSize(2000,300); //testing
 measures_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-TimeSignature ts = new TimeSignature(4.0,4.0); //currently hard coded
+TimeSignature ts = new TimeSignature(2.0,4.0); //currently hard coded
 
 //record creation modal
 JInternalFrame i_frame = new JInternalFrame("Record", false, true);
@@ -360,8 +360,8 @@ generate_music_button.addActionListener(new ActionListener() {
 			userInput.setText(null); //clears input (isn't working)
 		
 			//creating note objs
-			MusicNote list_of_notes [] = MusicNote.getNotes(Newmessage);
-			
+			//MusicNote list_of_notes [] = MusicNote.getNotes(Newmessage);
+			MusicNote list_of_notes [] = MusicNote.setNotesXml(Newmessage);
 			int x_coord = 260;
 			//int tx_coord = 0;
 			int y_xtra = 0;
@@ -1268,7 +1268,8 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 		}
 		case 2:
 		{
-		if(note.getoctave() < 5)
+		if(note.uy_coord <= 48)
+		//if(note.getoctave() < 5)
 		{
 			bi_note = ImageIO.read(u_half_url);
 			result[2] = result[2] + 40; //when image is flipped, ycoord needs to be adjusted
@@ -1282,7 +1283,8 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 		}
 		case 3:
 		{
-		if(note.getoctave() < 5)
+		if(note.uy_coord <= 48)
+		//if(note.getoctave() < 5)
 		{
 			bi_note = ImageIO.read(u_quarter_url);
 			result[2] = result[2] + 40; //when image is flipped, ycoord needs to be adjusted
@@ -1296,7 +1298,8 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 		}
 		case 4:
 		{
-		if(note.getoctave() < 5)
+		if(note.uy_coord <= 48)
+		//if(note.getoctave() < 5)
 		{
 			bi_note = ImageIO.read(u_eighth_url);
 			result[2] = result[2] + 40; //when image is flipped, ycoord needs to be adjusted

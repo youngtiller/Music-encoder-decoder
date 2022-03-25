@@ -7,7 +7,7 @@ public class ANote extends MusicNote {
 	
 	
 	*/
-	
+	public int y_coord = 7;
 	//private int note_id = 1; already declared in 'MusicNote'
     //private String label; already declared in 'MusicNote'
     //private boolean Gclef; //notes above 'middle c' (melody or not) already declared in 'MusicNote'
@@ -17,7 +17,9 @@ public class ANote extends MusicNote {
         
     	super(o,l,g,p);
     	super.y_coord = 315;
-    	super.uy_coord = 65;
+    	super.setuy_coord(y_coord);
+    	//super.uy_coord = 6;
+    	//super.uy_coord = 65;
     	//supersetlabel("C")
         //super.id++;
         //this.Gclef = g;
