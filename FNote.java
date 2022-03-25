@@ -5,11 +5,14 @@ public class FNote extends MusicNote{
     //private boolean Gclef; //notes above 'middle c' (melody or not) already declared in 'MusicNote'
     // private String path = " Notes/key01.mp3"; already declared in 'MusicNote'
 
+	public int y_coord = 21;
+	
     public FNote(int o, String l, boolean g, String p){
         
     	super(o,l,g,p);
     	super.y_coord = 271;
-    	super.uy_coord = 21;
+    	//super.uy_coord = 21;
+    	super.setuy_coord(y_coord);
     	//supersetlabel("C")
         //super.id++;
         //this.Gclef = g;
