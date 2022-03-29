@@ -276,15 +276,15 @@ abstract class MusicNote implements Comparable<MusicNote>{
     			notes.add(eElement.getElementsByTagName("E4").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("F4").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("G4").item(0).getTextContent());
-    			notes.add(eElement.getElementsByTagName("A5").item(0).getTextContent());
-    			notes.add(eElement.getElementsByTagName("B5").item(0).getTextContent());
+    			notes.add(eElement.getElementsByTagName("A4").item(0).getTextContent());
+    			notes.add(eElement.getElementsByTagName("B4").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("C5").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("D5").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("E5").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("F5").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("G5").item(0).getTextContent());
-    			notes.add(eElement.getElementsByTagName("A6").item(0).getTextContent());
-    			notes.add(eElement.getElementsByTagName("B6").item(0).getTextContent());
+    			notes.add(eElement.getElementsByTagName("A5").item(0).getTextContent());
+    			notes.add(eElement.getElementsByTagName("B5").item(0).getTextContent());
     	
     		}  
     	}  
