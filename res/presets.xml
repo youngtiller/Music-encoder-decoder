@@ -16,16 +16,16 @@
 <E4>cCrR</E4>
 <F4>dDsS</F4>
 <G4>eEtT</G4>
-<A4>fFuU</A5>
-<B4>gGvV</B5>
+<A4>fFuU</A4>
+<B4>gGvV</B4>
 <!-- Octave-->
 <C5>hHwW</C5>
 <D5>iIxX</D5>
 <E5>jJyY</E5>
 <F5>kKzZ</F5>
 <G5>lL!?</G5>
-<A5>mM.;</A6>
-<B5>nN,:</B6>
+<A5>mM.;</A5>
+<B5>nN,:</B5>
 </MelodyNotes>
 
 <!-- bass notes are all notes from C2 to B3 (middle c) (inclusive)-->
@@ -37,16 +37,16 @@
 <E2>cCrR</E2>
 <F2>dDsS</F2>
 <G2>eEtT</G2>
-<A2>fFuU</A3>
-<B2>gGvV</B3>
+<A2>fFuU</A2>
+<B2>gGvV</B2>
 <!-- Octave-->
 <C3>hHwW</C3>
 <D3>iIxX</D3>
 <E3>jJyY</E3>
 <F3>kKzZ</F3>
 <G3>lL!?</G3>
-<A3>mM.;</A4>
-<B3>nN,:</B4>
+<A3>mM.;</A3>
+<B3>nN,:</B3>
 </BassNotes>
 
 <rest></rest>
