@@ -46,6 +46,17 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.lang.Double;
 
 //import sun.audio.AudioPlayer;
 
@@ -59,6 +70,7 @@ import javax.swing.border.EmptyBorder;
 public class SentenceIN {
 	
 	public static void main(String[] args) {
+		/*
 		Scanner kb = new Scanner(System.in);
 		Scanner inputStream = null;
 		PrintWriter outputStream = null;
@@ -66,7 +78,7 @@ public class SentenceIN {
 		MusicNote list_of_notes[] = new MusicNote[5];// (5 only there for testing) get size of message later
 		int option = 0;
 		String sentence;
-		
+		*/
 		//only here for testing
 		JFrame f = new JFrame();
 		JPanel p = new JPanel();
@@ -169,8 +181,29 @@ int tempo = 1; // used for playback speed of music sheet (currently hard-coded)
 measures_panel.setSize(2000,300); //testing
 measures_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-TimeSignature ts = new TimeSignature(2.0,4.0); //currently hard coded
+//to avoid enclosing scope error (t_sig.get(0) = an instance of TimeSignature
+ArrayList<TimeSignature> t_sig = new ArrayList<TimeSignature>();
 
+//TimeSignature ts = new TimeSignature(4.0,4.0);
+try {
+	double [] ts_xml = getTimeSignatureXml();
+	TimeSignature ts = new TimeSignature(ts_xml[0],ts_xml[1]);
+	t_sig.add(ts);
+} catch (ParserConfigurationException e4) {
+	// TODO Auto-generated catch block
+	
+	e4.printStackTrace();
+} catch (SAXException e4) {
+	// TODO Auto-generated catch block
+	
+	e4.printStackTrace();
+} catch (IOException e4) {
+	// TODO Auto-generated catch block
+	
+	e4.printStackTrace();
+}
+//TimeSignature ts = new TimeSignature(ts_xml[0],ts_xml[1]);
+//TimeSignature ts = new TimeSignature(4.0,4.0);
 //record creation modal
 JInternalFrame i_frame = new JInternalFrame("Record", false, true);
 i_frame.setName("Music Encoder");
@@ -403,16 +436,20 @@ generate_music_button.addActionListener(new ActionListener() {
 					ArrayList<Measure> measures = new ArrayList<Measure>();
 					
 					//sets all rhythms
+					/*
 					for(int count2 = 0;count2 < list_of_notes.length; count2++)
 					{
 						getRandomRhythm(r,list_of_notes,count2, ts);
 					}
+					*/
+					MusicNote.setRhythmXml(list_of_notes, Newmessage, t_sig.get(0));
+					//MusicNote.setRhythmXml(list_of_notes, Newmessage, ts);
 					
 					double measure_beat_count = 0.0;
 					double current_note_beat = 0.0;
 					int measure_count = 0;
-					double num_beats_per_measure = ts.gettop_number();
-					double bottom_number = ts.getbottom_number(); //base rhythm that counts as a beat
+					double num_beats_per_measure = t_sig.get(0).gettop_number();
+					double bottom_number = t_sig.get(0).getbottom_number(); //base rhythm that counts as a beat
 					Measure m = new Measure();
 					measures.add(m);
 					System.out.println("Time Signature: " + num_beats_per_measure + "/" + bottom_number);
@@ -424,14 +461,14 @@ generate_music_button.addActionListener(new ActionListener() {
 						case "whole":
 							{	
 								current_note_beat = bottom_number;
-								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/4
+								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1
 					
 								break;
 							}
 						case "half":
 							{
 								current_note_beat = bottom_number/2.0;
-								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/4
+								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/2
 								
 								break;
 							}
@@ -445,7 +482,7 @@ generate_music_button.addActionListener(new ActionListener() {
 						case "eighth":
 							{
 								current_note_beat = bottom_number/8.0;
-								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/4
+								measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/8
 								
 								break;
 							}
@@ -471,7 +508,7 @@ generate_music_button.addActionListener(new ActionListener() {
 						measure_beat_count = current_note_beat; //should set to correct amount of beats the note has
 						System.out.println("New first measure: " + measure_beat_count);
 					}
-					else 
+					else //first note of measure (for any measure except first measure)
 					{
 						
 						measure_count++;
@@ -532,9 +569,9 @@ generate_music_button.addActionListener(new ActionListener() {
 						png_ts = ImageIO.read(ts_url);
 						try {
 							
-							measure_w_ts = addTSToClef(png_ts, ts, ts1,ts2,ts3,ts4,ts5,ts6,ts7,ts8,ts9);
+							measure_w_ts = addTSToClef(png_ts, t_sig.get(0), ts1,ts2,ts3,ts4,ts5,ts6,ts7,ts8,ts9);
 							System.out.println("ts was added graphically\n");
-							ts.setimg(measure_w_ts);
+							t_sig.get(0).setimg(measure_w_ts);
 							i_w_ts = new ImageIcon(measure_w_ts);
 							jl_w_ts = new JLabel(i_w_ts);
 							jl_w_ts.setBorder(e_border);
@@ -559,7 +596,7 @@ generate_music_button.addActionListener(new ActionListener() {
 			            try {
 			            	
 							png_measure = ImageIO.read(e_measure_url);
-							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, u_half_url, quarter_url, u_quarter_url, eighth_url, u_eighth_url,ts);
+							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, u_half_url, quarter_url, u_quarter_url, eighth_url, u_eighth_url,t_sig.get(0));
 
 							//ImageIO.write(png_measure, "jpg", new File(e_measure_url.toString()));
 							
@@ -598,7 +635,7 @@ generate_music_button.addActionListener(new ActionListener() {
 	
 			}
 		try {
-			setToJpg(frame, music_sheet, w, h, ts);
+			setToJpg(frame, music_sheet, w, h, t_sig.get(0));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -762,7 +799,7 @@ save_sheet_button.addActionListener(new ActionListener() {
 	{
 		
 		try {
-			setToJpg(frame, music_sheet, w, h, ts);
+			setToJpg(frame, music_sheet, w, h, t_sig.get(0));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -962,29 +999,30 @@ public static int [] get_setRandomRhythm (Random r, MusicNote [] list_of_notes, 
  * arr [3] (width)
  * arr [4] (length)
  */
-public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, int ts_condition)
+public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, double ts_condition)
 {
 	
 	switch(note.getrhythm())
 	{
 	case "whole": 
 	{	
-		x_coord = x_coord + 38 * ts_condition;
+		x_coord = (int) (x_coord + 35 * ts_condition);
 		int [] info = {1,x_coord,note.getuy_coord(),20,20};
 		return info;
 	}
 	
 	case "half": 
 	{
-		x_coord = x_coord + 17 * ts_condition;
+		x_coord = (int) (x_coord + 16 * ts_condition);
+		//x_coord = x_coord + 17 * ts_condition;
 		int [] info= {2,x_coord,(note.getuy_coord() - 40),20,60};
 		return info;
 	
 	}
 	case "quarter": 
 	{
-		
-		x_coord = x_coord + 7 * ts_condition;	
+		x_coord = (int) (x_coord + 5 * ts_condition); 
+		//x_coord = x_coord + 7 * ts_condition;	
 		int [] info = {3, x_coord, (note.getuy_coord() - 40),20,60};
 		return info;
 		
@@ -992,7 +1030,8 @@ public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, int ts
 		
 	case "eighth": 
 	{
-		x_coord = x_coord + 1 * ts_condition;
+		x_coord = (int) (x_coord + 0.5 * ts_condition);
+		//x_coord = x_coord + 1 * ts_condition;
 		//int [] info= {4, x_coord,(note.getuy_coord() - 40),40,60};
 		int [] info= {4, x_coord,(note.getuy_coord() - 40),20,60};
 		return info;
@@ -1053,6 +1092,7 @@ public static void getRandomRhythm (Random r, MusicNote [] list_of_notes, int co
 	}
 
 }
+
 
 
 
@@ -1234,8 +1274,37 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 	int x_coord = 0;
 	int prev_x_coord;
 	BufferedImage bi_note;
+
+	double ts_condition; 
 	
+	if( ts.gettop_number() / ts.getbottom_number() ==  1) // ex. 2/2, 4/4
+	{
+		ts_condition = 2;
+		System.out.println("ts = 2\n");
+	}
+	else if(ts.gettop_number() / ts.getbottom_number() ==  0.75) // ex. 3/4, 6/8
+	{
+		ts_condition = 3;
+		System.out.println("ts = 3\n");
+	}
+	else if(ts.gettop_number() / ts.getbottom_number() ==  0.5) // ex. 2/4, 4/8
+	{
+		ts_condition = 4;
+		System.out.println("ts = 4\n");
+	}
+	else if(ts.gettop_number() / ts.getbottom_number() ==  2) // ex. 4/2, 8/4
+	{
+		ts_condition = 1;
+		System.out.println("ts = 1\n");
+	}
+	else //ts.gettop_number() / ts.getbottom_number() ==  1.5
+	{
+		ts_condition = 1.5; 
+		System.out.println("ts = 1.5\n");
+	}
+	/*
 	int ts_condition; 
+	
 	if( ts.gettop_number() / ts.getbottom_number() ==  0.5)
 	{
 		ts_condition = 4;
@@ -1251,6 +1320,7 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 		ts_condition = 2; 
 		System.out.println("ts = 2\n");
 	}
+	*/
 	for (MusicNote note : m.getnotes()) 
 	{ 		      
         //function to find out where the location of the note need to be and 
@@ -1428,10 +1498,48 @@ public static BufferedImage bufImgSetter(int condition, URL ts1, URL ts2, URL ts
 //used to dynamically create a string to call the saved file of music sheet
 //not in current use
 
+//gets rhythm conversion from XML file
+public static double [] getTimeSignatureXml() throws ParserConfigurationException, SAXException, IOException
+{
+	
+	 
+	File file = new File("res/presets.xml");  
+	
+	 
+	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
+	
+	 
+	DocumentBuilder db = dbf.newDocumentBuilder();  
+	Document doc = db.parse(file);  
+	doc.getDocumentElement().normalize();  
+	//System.out.println("Root element: " + doc.getDocumentElement().getNodeName());  
+	NodeList nodeList = doc.getElementsByTagName("TimeSignature");  
+	// nodeList is not iterable, so we are using for loop  
+	for (int itr = 0; itr < nodeList.getLength(); itr++)   
+	{  
+		Node node = nodeList.item(itr);  
+	
+		//System.out.println("\nNode Name :" + node.getNodeName());  
+		if (node.getNodeType() == Node.ELEMENT_NODE)   
+		{  
+			Element eElement = (Element) node;  
+			String n = eElement.getElementsByTagName("numerator").item(0).getTextContent(); 
+			String d = eElement.getElementsByTagName("denominator").item(0).getTextContent();
+			double [] ts_values = {Double.parseDouble(n),Double.parseDouble(d)};
+			
+			return ts_values;
+		}  
+	}  
+	double [] list = {4.0,4.0};
+	return list; //this shouldn't happen
+	
+}
+
 public static String fileNamer()
 {
 	return "music_sheet_sc" + ss_counter + ".jpg";
 }
+
 
 
 /*
