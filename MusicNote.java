@@ -410,6 +410,151 @@ abstract class MusicNote implements Comparable<MusicNote>{
     	return list;
     }
     
+    //gets rhythm conversion from XML file
+    public static ArrayList<String> getRhythmXml() throws ParserConfigurationException, SAXException, IOException
+    {
+    	ArrayList<String> conversions = new ArrayList<String>(); 
+    	 
+    	File file = new File("res/presets.xml");  
+    	
+    	 
+    	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
+    	
+    	 
+    	DocumentBuilder db = dbf.newDocumentBuilder();  
+    	Document doc = db.parse(file);  
+    	doc.getDocumentElement().normalize();  
+    	//System.out.println("Root element: " + doc.getDocumentElement().getNodeName());  
+    	NodeList nodeList = doc.getElementsByTagName("Rhythm");  
+    	// nodeList is not iterable, so we are using for loop  
+    	for (int itr = 0; itr < nodeList.getLength(); itr++)   
+    	{  
+    		Node node = nodeList.item(itr);  
+    		//System.out.println("\nNode Name :" + node.getNodeName());  
+    		if (node.getNodeType() == Node.ELEMENT_NODE)   
+    		{  
+    			Element eElement = (Element) node;  
+    			conversions.add(eElement.getElementsByTagName("whole").item(0).getTextContent()); 
+    			conversions.add(eElement.getElementsByTagName("half").item(0).getTextContent());
+    			conversions.add(eElement.getElementsByTagName("quarter").item(0).getTextContent());
+    			conversions.add(eElement.getElementsByTagName("eighth").item(0).getTextContent());
+    			
+    		}  
+    	}  
+    	
+    	return conversions;
+    	
+    }
+    // sets rhythms to fully populate each measure 
+    public static void setRhythmXml(MusicNote [] list_of_notes, ArrayList <Character> Newmessage, TimeSignature ts)
+    {
+    	ArrayList<String> xml_rhythms;
+		try {
+			xml_rhythms = getRhythmXml();
+			
+			//rhythm conversions
+	    	String whole = xml_rhythms.get(0); 
+	    	String half = xml_rhythms.get(1);
+	    	String quarter = xml_rhythms.get(2);
+	    	String eighth = xml_rhythms.get(3);
+	        
+	        int i2 = 1;
+	        double ms = (ts.gettop_number() / ts.getbottom_number()) * 8.00;
+	        int measure_size = (int) ms; //default (4/4) measure size is 8.
+	        int measure_size_c = 0;
+	        int c_diff = 0;
+	        for (int i = 0; i < Newmessage.size(); i++)
+	        {
+	        	if(i == Newmessage.size() - 1)
+	        	{
+	        		i2 = 0;
+	        	}
+	        	if(measure_size_c == measure_size)
+	        	{
+	        		measure_size_c = 0;
+	        	}
+	        	c_diff = measure_size - measure_size_c;
+	            if(whole.indexOf(Newmessage.get(i2)) != -1)
+	            	{
+	            	if(c_diff >= 8)
+	            		{
+	            		list_of_notes[i].setrhythm("whole");
+	            		measure_size_c += 8;
+	            		}
+	            	else if(c_diff >= 4)
+	            		{
+	            		list_of_notes[i].setrhythm("half");
+	            		measure_size_c += 4;
+	            		}
+	            	else if(c_diff >= 2)
+            			{
+	            		list_of_notes[i].setrhythm("quarter");
+	            		measure_size_c += 2;
+            			}
+	            	else //c_diff == 1
+            			{
+	            		list_of_notes[i].setrhythm("eighth");
+	            		measure_size_c += 1;
+            			}
+	            	}
+	            else if(half.indexOf(Newmessage.get(i2)) != -1)
+	            	{
+	            	if(c_diff >= 4)
+            			{
+	            		list_of_notes[i].setrhythm("half");
+	            		measure_size_c += 4;
+            			}
+	            	else if(c_diff >= 2)
+        				{
+	            		list_of_notes[i].setrhythm("quarter");
+	            		measure_size_c += 2;
+        				}
+	            	else //c_diff == 1
+        				{
+	            		list_of_notes[i].setrhythm("eighth");
+	            		measure_size_c += 1;
+        				}
+	            	}
+	            else if(quarter.indexOf(Newmessage.get(i2)) != -1)
+            		{
+	            	if(c_diff >= 2)
+    					{
+	            		list_of_notes[i].setrhythm("quarter");
+	            		measure_size_c += 2;
+    					}
+	            	else //c_diff == 1
+    					{
+	            		list_of_notes[i].setrhythm("eighth");
+	            		measure_size_c += 1;
+    					}
+            		}
+	            else if(eighth.indexOf(Newmessage.get(i2)) != -1)
+	            	{
+	            	list_of_notes[i].setrhythm("eighth");
+	            	measure_size_c += 1;
+	            	}
+	            else
+	            	{
+	            		// do nothing
+	            	} 
+	        i2++;   
+	        }
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+   }
+
+    
+
+    
    //necessary for testing
    public String toString()
    {

@@ -3,13 +3,14 @@
 <!-- currently, the only java implementation that is working is for the MelodyNotes nodes-->
 <Presets>
 <TimeSignature>
-<numerator>4</numerator>
+<numerator>2</numerator>
 <denominator>4</denominator>
 </TimeSignature>
 
 <ConversionTable>
 <!-- melody notes are all notes from C4 (middle c) to B5(inclusive)-->
 <MelodyNotes>
+<!-- insert characters without spaces for each note -->
 <!-- Octave-->
 <C4>aApP</C4>
 <D4>bBqQ</D4>
@@ -31,6 +32,7 @@
 <!-- bass notes are all notes from C2 to B3 (middle c) (inclusive)-->
 <!-- currently java for bass notes is only partially implemented-->
 <BassNotes>
+<!-- insert characters without spaces for each note -->
 <!-- Octave-->
 <C2>aApP</C2>
 <D2>bBqQ</D2>
@@ -52,11 +54,11 @@
 <rest></rest>
 
 <Rhythm>
-<!-- determined by a rule -->
-<whole></whole>
-<half></half>
-<quarter></quarter>
-<eighth></eighth>
+<!-- determined by a rule: first rhythm in measure for note n is character of note n+1, to satisfy measure fulfillment, the remaining rhythm notes for the measure are determined the same way but will be the next rhythm below rhythm selected if rhythm selected doesn't fit in the measure. Ex. user input = love,  rhythm first note = half since 'o', rhythm second note = half since 'u' = whole but too big so half. -->
+<whole>uvwxyz</whole>
+<half>opqrst</half>
+<quarter>hijklmn</quarter>
+<eighth>abcdefg</eighth>
 
 <!-- optional-->
 <sixteenth></sixteenth>
