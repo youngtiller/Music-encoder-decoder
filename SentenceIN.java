@@ -261,6 +261,12 @@ ImageIcon i_eighth = new ImageIcon(eighth_url);
 
 URL u_eighth_url = SentenceIN.class.getResource("/u_eighth_note.png");
 */
+
+URL whole_rest_url = SentenceIN.class.getResource("/whole_rest.png");
+URL half_rest_url = SentenceIN.class.getResource("/half_rest.png");
+URL quarter_rest_url = SentenceIN.class.getResource("/quarter_rest.png");
+URL eighth_rest_url = SentenceIN.class.getResource("/eighth_rest.png");
+
 URL ts1 = SentenceIN.class.getResource("/ts_1.png");
 URL ts2 = SentenceIN.class.getResource("/ts_2.png");
 URL ts3 = SentenceIN.class.getResource("/ts_3.png");
@@ -595,8 +601,9 @@ generate_music_button.addActionListener(new ActionListener() {
 			            str = str + m1;
 			            try {
 			            	
-							png_measure = ImageIO.read(e_measure_url);
-							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, u_half_url, quarter_url, u_quarter_url, eighth_url, u_eighth_url,t_sig.get(0));
+							png_measure = ImageIO.read(e_measure_url);  
+							//added rest urls 
+							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, u_half_url, quarter_url, u_quarter_url, eighth_url, u_eighth_url, whole_rest_url, half_rest_url, quarter_rest_url, eighth_rest_url,t_sig.get(0));
 
 							//ImageIO.write(png_measure, "jpg", new File(e_measure_url.toString()));
 							
@@ -1001,31 +1008,59 @@ public static int [] get_setRandomRhythm (Random r, MusicNote [] list_of_notes, 
  */
 public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, double ts_condition)
 {
+	if(note.getlabel() == "rest")
+	{
+		
+	}
 	
 	switch(note.getrhythm())
 	{
 	case "whole": 
 	{	
 		x_coord = (int) (x_coord + 35 * ts_condition);
-		int [] info = {1,x_coord,note.getuy_coord(),20,20};
-		return info;
+		if(note.getlabel() == "rest")
+		{
+			int [] info = {1,x_coord,(note.getuy_coord() - 45),40,20}; //change
+			return info;
+		}
+		else
+		{
+			int [] info = {1,x_coord,note.getuy_coord(),20,20};
+			return info;
+		}
+		
 	}
 	
 	case "half": 
 	{
 		x_coord = (int) (x_coord + 16 * ts_condition);
 		//x_coord = x_coord + 17 * ts_condition;
-		int [] info= {2,x_coord,(note.getuy_coord() - 40),20,60};
-		return info;
+		if(note.getlabel() == "rest")
+		{
+			int [] info= {2,x_coord,(note.getuy_coord() - 36),40,20};
+			return info;
+		}
+		else
+		{
+			int [] info= {2,x_coord,(note.getuy_coord() - 40),20,60};
+			return info;
+		}
 	
 	}
 	case "quarter": 
 	{
 		x_coord = (int) (x_coord + 5 * ts_condition); 
 		//x_coord = x_coord + 7 * ts_condition;	
-		int [] info = {3, x_coord, (note.getuy_coord() - 40),20,60};
-		return info;
-		
+		if(note.getlabel() == "rest")
+		{
+			int [] info = {3, x_coord, (note.getuy_coord() - 50),20,60}; 
+			return info;
+		}
+		else
+		{
+			int [] info = {3, x_coord, (note.getuy_coord() - 40),20,60};
+			return info;
+		}
 	}
 		
 	case "eighth": 
@@ -1033,13 +1068,22 @@ public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, double
 		x_coord = (int) (x_coord + 0.5 * ts_condition);
 		//x_coord = x_coord + 1 * ts_condition;
 		//int [] info= {4, x_coord,(note.getuy_coord() - 40),40,60};
-		int [] info= {4, x_coord,(note.getuy_coord() - 40),20,60};
-		return info;
+		if(note.getlabel() == "rest")
+		{
+			int [] info= {4, x_coord,(note.getuy_coord() - 45),20,40};
+			return info;
+		}
+		else
+		{
+			int [] info= {4, x_coord,(note.getuy_coord() - 40),20,60};
+			return info;
 		//break;
+		}
 		
 	}
 	default: { int [] info= {1,2,3,4,5}; return info; } //case shouldn't happen
- }
+    }
+  
 
 }
 
@@ -1264,7 +1308,7 @@ public static BufferedImage joinBufferedImageVertically(BufferedImage img1, Buff
 	    return newImage;
 	  }
 //add notes to a bufferimage of an empty measure
-public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m, URL whole_url, URL half_url,URL u_half_url, URL quarter_url, URL u_quarter_url,URL eighth_url, URL u_eighth_url, TimeSignature ts) throws IOException
+public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m, URL whole_url, URL half_url,URL u_half_url, URL quarter_url, URL u_quarter_url,URL eighth_url, URL u_eighth_url, URL whole_rest_url, URL half_rest_url, URL quarter_rest_url, URL eighth_rest_url, TimeSignature ts) throws IOException
 {
 	BufferedImage img_result = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
 	Graphics2D g = (Graphics2D) img_result.getGraphics();
@@ -1328,6 +1372,41 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 	int [] result = setMeasureBufferedImage(note, x_coord, ts_condition);
 	
 	
+	if(note.getlabel() == "rest")
+	{
+		switch(result [0])
+		{
+			case 1:
+			{
+			bi_note = ImageIO.read(whole_rest_url);
+			//prev_x_coord = result[1] - x_coord;
+			break;
+			}
+			case 2:
+			{
+			bi_note = ImageIO.read(half_rest_url);
+			//prev_x_coord = result[1] - x_coord;
+			break;
+			}
+			case 3:
+			{
+			bi_note = ImageIO.read(quarter_rest_url);
+			//prev_x_coord = result[1] - x_coord;
+			break;
+			}
+			case 4:
+			{
+			bi_note = ImageIO.read(eighth_rest_url);
+			//prev_x_coord = result[1] - x_coord;
+			break;
+			}
+			default: bi_note = ImageIO.read(eighth_rest_url); prev_x_coord = result[1] - x_coord; break; //shouldn't happen
+			
+			
+	}
+	}
+	else
+	{
 	switch(result [0])
 	{
 		case 1:
@@ -1384,6 +1463,7 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 		break;
 		}
 		default: bi_note = ImageIO.read(eighth_url); prev_x_coord = result[1] - x_coord; break; //shouldn't happen
+	}
 	}
 	
 	prev_x_coord = result[1] - x_coord;
