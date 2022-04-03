@@ -19,15 +19,15 @@ abstract class MusicNote implements Comparable<MusicNote>{
 	// Attributes
 
 	private int octave; //this is gonna mean octave 
-    private String label; //What type the note is (ex. 'A' OR 'G')
+    private String label; //What type the note is (ex. 'A' OR 'G' or Rest)
     private boolean Gclef; //notes above 'middle c' (melody or not)
     private String path;// = " Notes/key01.mp3";
     static int id = 0; //what's the difference between this and "note_id"
     private String rhythm; //whole,half,quarter, eighth
     
-    protected int y_coord; //new (for putting coordinates on music sheet)
+    protected int y_coord; //for putting coordinates on music sheet (relative to JFrame)
     
-    protected int uy_coord; //new (for putting coordinates on music sheet)
+    protected int uy_coord; //for putting coordinates on music sheet (relative to measure)
     //Constructor
     public MusicNote (int o, String l, boolean g, String p)
     {
@@ -285,6 +285,11 @@ abstract class MusicNote implements Comparable<MusicNote>{
     			notes.add(eElement.getElementsByTagName("G5").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("A5").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("B5").item(0).getTextContent());
+<<<<<<< Updated upstream
+=======
+    			
+    			notes.add(eElement.getElementsByTagName("Rest").item(0).getTextContent());
+>>>>>>> Stashed changes
     	
     		}  
     	}  
@@ -315,6 +320,7 @@ abstract class MusicNote implements Comparable<MusicNote>{
     	String G5 = xml_notes.get(11);
     	String A5 = xml_notes.get(12);
     	String B5 = xml_notes.get(13);
+    	String rest = xml_notes.get(14);
     	
     	//bass notes (not implemented)
     	String C2;String D2;String E2;String F2;String G2;String A2;String  B2;
@@ -385,6 +391,10 @@ abstract class MusicNote implements Comparable<MusicNote>{
     		{
         	list_of_notes[i]= new BNote(5,"b",true," Notes/key01.mp3");
     		}
+        else if(rest.indexOf(Newmessage.get(i)) != -1)
+			{
+        	list_of_notes[i]= new Rest(4,"rest",true," Notes/key01.mp3");
+			}
         else
         {	System.out.println("idk");//this is temporary fix idk man
         list_of_notes[i]= new ANote(1,"a",true," Notes/key01.mp3");

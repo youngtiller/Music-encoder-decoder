@@ -3,7 +3,7 @@
 <!-- currently, the only java implementation that is working is for the MelodyNotes nodes-->
 <Presets>
 <TimeSignature>
-<numerator>2</numerator>
+<numerator>4</numerator>
 <denominator>4</denominator>
 </TimeSignature>
 
@@ -27,6 +27,10 @@
 <G5>lL!?</G5>
 <A5>mM.;</A5>
 <B5>nN,:</B5>
+<<<<<<< Updated upstream
+=======
+<Rest>0123456789</Rest>
+>>>>>>> Stashed changes
 </MelodyNotes>
 
 <!-- bass notes are all notes from C2 to B3 (middle c) (inclusive)-->
@@ -49,16 +53,18 @@
 <G3>lL!?</G3>
 <A3>mM.;</A3>
 <B3>nN,:</B3>
+<<<<<<< Updated upstream
+=======
+<Rest>0123456789</Rest>
+>>>>>>> Stashed changes
 </BassNotes>
-
-<rest></rest>
 
 <Rhythm>
 <!-- determined by a rule: first rhythm in measure for note n is character of note n+1, to satisfy measure fulfillment, the remaining rhythm notes for the measure are determined the same way but will be the next rhythm below rhythm selected if rhythm selected doesn't fit in the measure. Ex. user input = love,  rhythm first note = half since 'o', rhythm second note = half since 'u' = whole but too big so half. -->
-<whole>uvwxyz</whole>
-<half>opqrst</half>
-<quarter>hijklmn</quarter>
-<eighth>abcdefg</eighth>
+<whole>uvwxyzUVWXYZ01234</whole>
+<half>opqrstOPQRST56789</half>
+<quarter>hijklmnHIJKLMN!?:</quarter>
+<eighth>abcdefgABCDEFG;,.</eighth>
 
 <!-- optional-->
 <sixteenth></sixteenth>
