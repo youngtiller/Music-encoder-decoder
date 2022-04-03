@@ -337,67 +337,67 @@ abstract class MusicNote implements Comparable<MusicNote>{
     {
         if(C4.indexOf(Newmessage.get(i)) != -1)
         	{
-            list_of_notes[i]= new CNote(4,"c",true," Notes/key01.mp3");
+            list_of_notes[i]= new CNote(4,"c",true,"C4.mp3");
         	}
         else if(D4.indexOf(Newmessage.get(i)) != -1)
         	{
-        	list_of_notes[i]= new DNote(4,"d",true," Notes/key01.mp3");
+        	list_of_notes[i]= new DNote(4,"d",true,"D4.mp3");
         	}
         else if(E4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new ENote(4,"e",true," Notes/key01.mp3");
+        	list_of_notes[i]= new ENote(4,"e",true,"E4.mp3");
     		}
         else if(F4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new FNote(4,"f",true," Notes/key01.mp3");
+        	list_of_notes[i]= new FNote(4,"f",true,"F4.mp3");
     		}
         else if(G4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new GNote(4,"g",true," Notes/key01.mp3");
+        	list_of_notes[i]= new GNote(4,"g",true,"G4.mp3");
     		}
         else if(A4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new ANote(4,"a",true," Notes/key01.mp3");
+        	list_of_notes[i]= new ANote(4,"a",true,"A4.mp3");
     		}
         else if(B4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new BNote(4,"b",true," Notes/key01.mp3");
+        	list_of_notes[i]= new BNote(4,"b",true,"B4.mp3");
     		}
         else if(C5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new CNote(5,"c",true," Notes/key01.mp3");
+        	list_of_notes[i]= new CNote(5,"c",true,"C5.mp3");
     		}
         else if(D5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new DNote(5,"d",true," Notes/key01.mp3");
+        	list_of_notes[i]= new DNote(5,"d",true,"D5.mp3");
     		}
         else if(E5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new ENote(5,"e",true," Notes/key01.mp3");
+        	list_of_notes[i]= new ENote(5,"e",true,"E5.mp3");
     		}
         else if(F5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new FNote(5,"f",true," Notes/key01.mp3");
+        	list_of_notes[i]= new FNote(5,"f",true,"F5.mp3");
     		}
         else if(G5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new GNote(5,"g",true," Notes/key01.mp3");
+        	list_of_notes[i]= new GNote(5,"g",true,"G5.mp3");
     		}
         else if(A5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new ANote(5,"a",true," Notes/key01.mp3");
+        	list_of_notes[i]= new ANote(5,"a",true,"A5.mp3");
     		}
         else if(B5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new BNote(5,"b",true," Notes/key01.mp3");
+        	list_of_notes[i]= new BNote(5,"b",true,"B5.mp3");
     		}
         else if(rest.indexOf(Newmessage.get(i)) != -1)
 			{
-        	list_of_notes[i]= new Rest(4,"rest",true," Notes/key01.mp3");
+        	list_of_notes[i]= new Rest(4,"rest",true,"rest.mp3");
 			}
         else
         {	System.out.println("idk");//this is temporary fix idk man
-        list_of_notes[i]= new ANote(1,"a",true," Notes/key01.mp3");
+        list_of_notes[i]= new ANote(1,"a",true,"rest.mp3");
         	//return list_of_notes;
         }
         

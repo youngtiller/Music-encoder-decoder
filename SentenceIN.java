@@ -31,6 +31,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -87,11 +89,7 @@ public class SentenceIN {
 		
 		
 		/*
-		for( // This needs to be moved to main function
-				MusicNote note:list_of_notes)
-				{
-					playSound(note.getPath());
-				}
+
 				*/
 	}
 	//changed to static
@@ -101,6 +99,8 @@ public class SentenceIN {
 	public static ArrayList<BufferedImage> bi_measures = new ArrayList<BufferedImage>();
 	//save sheet counter (necessary to uniquely name files
 	public static int ss_counter = 0;
+
+	public static ArrayList<MusicNote> list_of_notes = new ArrayList<MusicNote>();
 	
 	//needed for clearing music
 	public static JPanel measures_panel = new JPanel();
@@ -130,12 +130,12 @@ public class SentenceIN {
 		
 	}
 	*/
-/*
+
 	public static void playSound(String path){ //plays sounds
 		try{
 			InputStream in = new FileInputStream(path);
-			AudioStream sound = new AudioStream(in);
-			AudioPlayer.player.start(sound);
+			AudioInputStream sound = new AudioInputStream(in);
+			AudioSystem.getClip().start(sound);
 		}
 		catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -143,7 +143,7 @@ public class SentenceIN {
 		
 	}
 }
-*/
+
 
 
 /*
@@ -401,6 +401,7 @@ generate_music_button.addActionListener(new ActionListener() {
 			//creating note objs
 			//MusicNote list_of_notes [] = MusicNote.getNotes(Newmessage);
 			MusicNote list_of_notes [] = MusicNote.setNotesXml(Newmessage);
+			//list_of_notes [] = MusicNote.setNotesXml(Newmessage);
 			int x_coord = 260;
 			//int tx_coord = 0;
 			int y_xtra = 0;
@@ -860,17 +861,21 @@ save_sheet_button.addActionListener(new ActionListener() {
 });
 //autoscrolls jscrollpane from what the current view is (not the best solution)
 play_button.addActionListener(new ActionListener() {
-	
+
 	public void actionPerformed(ActionEvent e)
 	{
 		Rectangle r;
-		
+
 		int end = 90 + (bi_measures.size()*175);
 		for(int x = (int)s_pane.getViewport().getViewRect().getX(); x < end; x += tempo)
 				{
 			 r = new Rectangle(x,0, 1, 1);
 			measures_panel.scrollRectToVisible(r);
 				}
+		for(int i = 0; i < Newmessage.size(); i++)
+		{
+			playSound(list_of_notes[i].getpath());
+		}
 	}
 });
 
