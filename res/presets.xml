@@ -59,7 +59,6 @@
 >>>>>>> Stashed changes
 </BassNotes>
 
-
 <Rhythm>
 <!-- determined by a rule: first rhythm in measure for note n is character of note n+1, to satisfy measure fulfillment, the remaining rhythm notes for the measure are determined the same way but will be the next rhythm below rhythm selected if rhythm selected doesn't fit in the measure. Ex. user input = love,  rhythm first note = half since 'o', rhythm second note = half since 'u' = whole but too big so half. -->
 <whole>uvwxyzUVWXYZ01234</whole>
