@@ -285,11 +285,9 @@ abstract class MusicNote implements Comparable<MusicNote>{
     			notes.add(eElement.getElementsByTagName("G5").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("A5").item(0).getTextContent());
     			notes.add(eElement.getElementsByTagName("B5").item(0).getTextContent());
-<<<<<<< Updated upstream
-=======
-    			
+		
     			notes.add(eElement.getElementsByTagName("Rest").item(0).getTextContent());
->>>>>>> Stashed changes
+
     	
     		}  
     	}  
@@ -299,7 +297,8 @@ abstract class MusicNote implements Comparable<MusicNote>{
     }
     
     
-    public static MusicNote [] setNotesXml(ArrayList<Character> Newmessage)
+    //public static MusicNote [] setNotesXml(ArrayList<Character> Newmessage)
+    public static ArrayList <MusicNote> setNotesXml(ArrayList<Character> Newmessage)
     {
     	try {
 			ArrayList <String> xml_notes = getNotesXml();
@@ -331,73 +330,90 @@ abstract class MusicNote implements Comparable<MusicNote>{
     // makes arraylist<MusicNote>
     int length = Newmessage.size();
     
-    MusicNote [] list_of_notes = new MusicNote[length]; 
+    //MusicNote [] list_of_notes = new MusicNote[length]; 
+    ArrayList <MusicNote> list_of_notes = new ArrayList <MusicNote> ();
     
     for (int i = 0; i < Newmessage.size(); i++)
     {
         if(C4.indexOf(Newmessage.get(i)) != -1)
         	{
-            list_of_notes[i]= new CNote(4,"c",true,"C4.mp3");
+            //list_of_notes[i]= new CNote(4,"c",true,"C4.mp3");
+            list_of_notes.add(new CNote(4,"c",true,"C4.wav"));
         	}
         else if(D4.indexOf(Newmessage.get(i)) != -1)
         	{
-        	list_of_notes[i]= new DNote(4,"d",true,"D4.mp3");
+        	//list_of_notes[i]= new DNote(4,"d",true,"D4.mp3");
+        	list_of_notes.add(new DNote(4,"d",true,"D4.wav"));
         	}
         else if(E4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new ENote(4,"e",true,"E4.mp3");
+        	//list_of_notes[i]= new ENote(4,"e",true,"E4.mp3");
+        	list_of_notes.add(new ENote(4,"e",true,"E4.wav"));
     		}
         else if(F4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new FNote(4,"f",true,"F4.mp3");
+        	//list_of_notes[i]= new FNote(4,"f",true,"F4.mp3");
+        	list_of_notes.add( new FNote(4,"f",true,"F4.wav"));
     		}
         else if(G4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new GNote(4,"g",true,"G4.mp3");
+        	//list_of_notes[i]= new GNote(4,"g",true,"G4.mp3");
+        	list_of_notes.add(new GNote(4,"g",true,"G4.wav"));
     		}
         else if(A4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new ANote(4,"a",true,"A4.mp3");
+        	//list_of_notes[i]= new ANote(4,"a",true,"A4.mp3");
+        	list_of_notes.add( new ANote(4,"a",true,"A4.wav"));
     		}
         else if(B4.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new BNote(4,"b",true,"B4.mp3");
+        	//list_of_notes[i]= new BNote(4,"b",true,"B4.mp3");
+        	list_of_notes.add(new BNote(4,"b",true,"B4.wav"));
     		}
         else if(C5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new CNote(5,"c",true,"C5.mp3");
+        	//list_of_notes[i]= new CNote(5,"c",true,"C5.mp3");
+        	list_of_notes.add( new CNote(5,"c",true,"C5.wav"));
     		}
         else if(D5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new DNote(5,"d",true,"D5.mp3");
+        	//list_of_notes[i]= new DNote(5,"d",true,"D5.mp3");
+        	list_of_notes.add( new DNote(5,"d",true,"D5.wav"));
     		}
         else if(E5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new ENote(5,"e",true,"E5.mp3");
+        	//list_of_notes[i]= new ENote(5,"e",true,"E5.mp3");
+        	list_of_notes.add( new ENote(5,"e",true,"D5.wav")); // no current audio file for E5(changed to D5 for testing)
     		}
         else if(F5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new FNote(5,"f",true,"F5.mp3");
+        	//list_of_notes[i]= new FNote(5,"f",true,"F5.mp3");
+        	list_of_notes.add( new FNote(5,"f",true,"F5.wav"));
     		}
         else if(G5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new GNote(5,"g",true,"G5.mp3");
+        	//list_of_notes[i]= new GNote(5,"g",true,"G5.mp3");
+        	list_of_notes.add( new GNote(5,"g",true,"G5.wav"));
     		}
         else if(A5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new ANote(5,"a",true,"A5.mp3");
+        	//list_of_notes[i]= new ANote(5,"a",true,"A5.mp3");
+        	list_of_notes.add( new ANote(5,"a",true,"A5.wav"));
     		}
         else if(B5.indexOf(Newmessage.get(i)) != -1)
     		{
-        	list_of_notes[i]= new BNote(5,"b",true,"B5.mp3");
+        	//list_of_notes[i]= new BNote(5,"b",true,"B5.mp3");
+        	list_of_notes.add( new BNote(5,"b",true,"B5.wav"));
     		}
         else if(rest.indexOf(Newmessage.get(i)) != -1)
 			{
-        	list_of_notes[i]= new Rest(4,"rest",true,"rest.mp3");
+        	//list_of_notes[i]= new Rest(4,"rest",true,"rest.mp3");
+        	list_of_notes.add( new Rest(4,"rest",true,"rest.wav"));
 			}
         else
         {	System.out.println("idk");//this is temporary fix idk man
-        list_of_notes[i]= new ANote(1,"a",true,"rest.mp3");
+        //list_of_notes[i]= new ANote(1,"a",true,"rest.mp3");
+        list_of_notes.add( new ANote(1,"a",true,"rest.wav"));
         	//return list_of_notes;
         }
         
@@ -416,8 +432,11 @@ abstract class MusicNote implements Comparable<MusicNote>{
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-    	MusicNote [] list = new MusicNote[0];
+    	/*MusicNote [] list = new MusicNote[0];
     	return list;
+    	*/
+    	ArrayList <MusicNote> notes = new ArrayList <MusicNote> ();
+    	return notes;
     }
     
     //gets rhythm conversion from XML file
@@ -456,7 +475,8 @@ abstract class MusicNote implements Comparable<MusicNote>{
     	
     }
     // sets rhythms to fully populate each measure 
-    public static void setRhythmXml(MusicNote [] list_of_notes, ArrayList <Character> Newmessage, TimeSignature ts)
+   // public static void setRhythmXml(MusicNote [] list_of_notes, ArrayList <Character> Newmessage, TimeSignature ts)
+    public static void setRhythmXml(ArrayList <MusicNote> list_of_notes, ArrayList <Character> Newmessage, TimeSignature ts)
     {
     	ArrayList<String> xml_rhythms;
 		try {
@@ -488,22 +508,26 @@ abstract class MusicNote implements Comparable<MusicNote>{
 	            	{
 	            	if(c_diff >= 8)
 	            		{
-	            		list_of_notes[i].setrhythm("whole");
+	            		//list_of_notes[i].setrhythm("whole");
+	            		list_of_notes.get(i).setrhythm("whole");
 	            		measure_size_c += 8;
 	            		}
 	            	else if(c_diff >= 4)
 	            		{
-	            		list_of_notes[i].setrhythm("half");
+	            		//list_of_notes[i].setrhythm("half");
+	            		list_of_notes.get(i).setrhythm("half");
 	            		measure_size_c += 4;
 	            		}
 	            	else if(c_diff >= 2)
             			{
-	            		list_of_notes[i].setrhythm("quarter");
+	            		//list_of_notes[i].setrhythm("quarter");
+	            		list_of_notes.get(i).setrhythm("quarter");
 	            		measure_size_c += 2;
             			}
 	            	else //c_diff == 1
             			{
-	            		list_of_notes[i].setrhythm("eighth");
+	            		//list_of_notes[i].setrhythm("eighth");
+	            		list_of_notes.get(i).setrhythm("eighth");
 	            		measure_size_c += 1;
             			}
 	            	}
@@ -511,17 +535,20 @@ abstract class MusicNote implements Comparable<MusicNote>{
 	            	{
 	            	if(c_diff >= 4)
             			{
-	            		list_of_notes[i].setrhythm("half");
+	            		//list_of_notes[i].setrhythm("half");
+	            		list_of_notes.get(i).setrhythm("half");
 	            		measure_size_c += 4;
             			}
 	            	else if(c_diff >= 2)
         				{
-	            		list_of_notes[i].setrhythm("quarter");
+	            		//list_of_notes[i].setrhythm("quarter");
+	            		list_of_notes.get(i).setrhythm("quarter");
 	            		measure_size_c += 2;
         				}
 	            	else //c_diff == 1
         				{
-	            		list_of_notes[i].setrhythm("eighth");
+	            		//list_of_notes[i].setrhythm("eighth");
+	            		list_of_notes.get(i).setrhythm("eighth");
 	            		measure_size_c += 1;
         				}
 	            	}
@@ -529,18 +556,21 @@ abstract class MusicNote implements Comparable<MusicNote>{
             		{
 	            	if(c_diff >= 2)
     					{
-	            		list_of_notes[i].setrhythm("quarter");
+	            		//list_of_notes[i].setrhythm("quarter");
+	            		list_of_notes.get(i).setrhythm("quarter");
 	            		measure_size_c += 2;
     					}
 	            	else //c_diff == 1
     					{
-	            		list_of_notes[i].setrhythm("eighth");
+	            		//list_of_notes[i].setrhythm("eighth");
+	            		list_of_notes.get(i).setrhythm("eighth");
 	            		measure_size_c += 1;
     					}
             		}
 	            else if(eighth.indexOf(Newmessage.get(i2)) != -1)
 	            	{
-	            	list_of_notes[i].setrhythm("eighth");
+	            	//list_of_notes[i].setrhythm("eighth");
+	            	list_of_notes.get(i).setrhythm("eighth");
 	            	measure_size_c += 1;
 	            	}
 	            else

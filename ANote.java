@@ -39,10 +39,6 @@ public class ANote extends MusicNote {
         }
     }
     */
-    public String getpath(){
-        //return path;
-    	return getpath();
-    }
 
     //Notes/key01.mp3
 

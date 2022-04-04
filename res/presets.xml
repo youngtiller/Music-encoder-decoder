@@ -26,11 +26,8 @@
 <F5>kKzZ</F5>
 <G5>lL!?</G5>
 <A5>mM.;</A5>
-<B5>nN,:</B5>
-<<<<<<< Updated upstream
-=======
+<B5>nNoO,:</B5>
 <Rest>0123456789</Rest>
->>>>>>> Stashed changes
 </MelodyNotes>
 
 <!-- bass notes are all notes from C2 to B3 (middle c) (inclusive)-->
@@ -53,10 +50,7 @@
 <G3>lL!?</G3>
 <A3>mM.;</A3>
 <B3>nN,:</B3>
-<<<<<<< Updated upstream
-=======
 <Rest>0123456789</Rest>
->>>>>>> Stashed changes
 </BassNotes>
 
 <Rhythm>
