@@ -38,10 +38,6 @@ public class Rest extends MusicNote{
         }
     }
     */
-    public String getpath(){
-        //return path;
-    	return getpath();
-    }
 
     //Notes/key01.mp3
 

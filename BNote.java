@@ -30,10 +30,7 @@ public class BNote extends MusicNote{
         }
     }
     */
-    public String getpath(){
-        //return path;
-    	return getpath();
-    }
+ 
     //Notes/key01.mp3
 
 	@Override

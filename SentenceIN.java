@@ -33,6 +33,7 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -131,18 +132,48 @@ public class SentenceIN {
 	}
 	*/
 
-	public static void playSound(String path){ //plays sounds
+	public static int playSound(MusicNote note, TimeSignature ts, boolean flag, int counter){ //plays sounds
 		try{
+			//URL audio_url = SentenceIN.class.getResource(path);
+			/*
 			InputStream in = new FileInputStream(path);
 			AudioInputStream sound = new AudioInputStream(in);
 			AudioSystem.getClip().start(sound);
+			*/
+			Clip clip;
+			AudioInputStream ais = AudioSystem.getAudioInputStream(SentenceIN.class.getResourceAsStream(note.getpath()));
+			clip = AudioSystem.getClip();
+	        clip.open(ais);
+	        clip.start();
+	        double ts_value = ts.gettop_number() / ts.getbottom_number();
+	        int whole_value = (int) (8000 * ts_value);
+	        int half_value = (int) (4000 * ts_value);
+	        int quarter_value = (int) (2000 * ts_value);
+	        int eighth_value = (int) (1000 * ts_value);
+	        switch(note.getrhythm())
+	        {
+	        case "whole": Thread.sleep(whole_value); counter+= whole_value; break;
+	        case "half":  Thread.sleep(half_value); counter+= half_value; break;
+	        case "quarter": Thread.sleep(quarter_value);counter+= quarter_value; break;
+	        case "eighth":  Thread.sleep(eighth_value); counter+= eighth_value; break;
+	        default: break;
+	        }
+	        System.out.println("Note: " + note.getlabel() + note.getoctave()+ " path: " + note.getpath() + "\n");
+	        if(flag)
+	        {
+	        //clip.stop();
+	        }
+	        clip.stop();
+	        return counter;
 		}
 		catch (Exception e) {
-			System.err.println(e.getMessage());
+			System.err.println(e.getMessage() + "something wrong with sound");
 		}
 		
+		return counter; //shouldn't happen
+		
 	}
-}
+
 
 
 
@@ -400,8 +431,8 @@ generate_music_button.addActionListener(new ActionListener() {
 		
 			//creating note objs
 			//MusicNote list_of_notes [] = MusicNote.getNotes(Newmessage);
-			MusicNote list_of_notes [] = MusicNote.setNotesXml(Newmessage);
-			//list_of_notes [] = MusicNote.setNotesXml(Newmessage);
+			//MusicNote list_of_notes [] = MusicNote.setNotesXml(Newmessage);
+			list_of_notes = MusicNote.setNotesXml(Newmessage);
 			int x_coord = 260;
 			//int tx_coord = 0;
 			int y_xtra = 0;
@@ -460,10 +491,12 @@ generate_music_button.addActionListener(new ActionListener() {
 					Measure m = new Measure();
 					measures.add(m);
 					System.out.println("Time Signature: " + num_beats_per_measure + "/" + bottom_number);
-					for(int count2 = 0;count2 < list_of_notes.length; count2++)
+					//for(int count2 = 0;count2 < list_of_notes.length; count2++)
+					for(int count2 = 0;count2 < list_of_notes.size(); count2++)
 					{
 						
-					switch(list_of_notes[count2].getrhythm())
+					//switch(list_of_notes[count2].getrhythm())
+						switch(list_of_notes.get(count2).getrhythm())
 						{
 						case "whole":
 							{	
@@ -498,13 +531,15 @@ generate_music_button.addActionListener(new ActionListener() {
 					if(measure_beat_count <= num_beats_per_measure)
 					{
 						//add note to current bar
-						measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						//measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						measures.get(measure_count).getnotes().add(list_of_notes.get(count2));
 						System.out.println("Within measure: " + measure_beat_count);
 					}
 					else if(measures.size() == 1 && measures.get(0).getnotes().size() == 0) //first measure
 					{
 						//add note to first measure
-						measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						//measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						measures.get(measure_count).getnotes().add(list_of_notes.get(count2));
 						//create new bar
 						Measure m1 = new Measure();
 						//add bar to bars
@@ -525,7 +560,8 @@ generate_music_button.addActionListener(new ActionListener() {
 						//add bar to bars
 						measures.add(m1);
 						//add note to new bar
-						measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						//measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+						measures.get(measure_count).getnotes().add(list_of_notes.get(count2));
 						//set counts
 						measure_beat_count = current_note_beat; //should set to correct amount of beats the note has
 						System.out.println("New measure: " + measure_beat_count);
@@ -864,17 +900,37 @@ play_button.addActionListener(new ActionListener() {
 
 	public void actionPerformed(ActionEvent e)
 	{
+		
 		Rectangle r;
-
+		/*
 		int end = 90 + (bi_measures.size()*175);
 		for(int x = (int)s_pane.getViewport().getViewRect().getX(); x < end; x += tempo)
 				{
 			 r = new Rectangle(x,0, 1, 1);
 			measures_panel.scrollRectToVisible(r);
 				}
+				*/
+		int starting_x = (int) s_pane.getViewport().getViewRect().getWidth();
+		int position = 0; //to autoscroll
+		int counter = 0; //to keep track of what notes are being played
 		for(int i = 0; i < Newmessage.size(); i++)
 		{
-			playSound(list_of_notes[i].getpath());
+			//if a measure is past
+			if(counter >= t_sig.get(0).gettop_number() / t_sig.get(0).gettop_number() * 8000)
+			{
+				counter = 0;
+				r = new Rectangle(starting_x +(position*175),0, 1, 1);
+				measures_panel.scrollRectToVisible(r);
+				position++;
+			}
+			if(i == (Newmessage.size() - 1))
+			{
+				counter = playSound(list_of_notes.get(i), t_sig.get(0),true, counter );
+			}
+			else
+			{
+				counter = playSound(list_of_notes.get(i),t_sig.get(0),false, counter );
+			}
 		}
 	}
 });

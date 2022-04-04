@@ -29,10 +29,7 @@ public class CNote extends MusicNote{
         }
     }
     */
-    public String getpath(){
-        //return path;
-    	return getpath();
-    }
+   
     //Notes/key01.mp3
     @Override
 	public int compareTo(MusicNote o) {
