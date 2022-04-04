@@ -383,7 +383,7 @@ abstract class MusicNote implements Comparable<MusicNote>{
         else if(E5.indexOf(Newmessage.get(i)) != -1)
     		{
         	//list_of_notes[i]= new ENote(5,"e",true,"E5.mp3");
-        	list_of_notes.add( new ENote(5,"e",true,"D5.wav")); // no current audio file for E5(changed to D5 for testing)
+        	list_of_notes.add( new ENote(5,"e",true,"E5.wav"));
     		}
         else if(F5.indexOf(Newmessage.get(i)) != -1)
     		{
