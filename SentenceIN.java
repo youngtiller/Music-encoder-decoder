@@ -298,6 +298,8 @@ URL half_rest_url = SentenceIN.class.getResource("/half_rest.png");
 URL quarter_rest_url = SentenceIN.class.getResource("/quarter_rest.png");
 URL eighth_rest_url = SentenceIN.class.getResource("/eighth_rest.png");
 
+URL extra_line_url = SentenceIN.class.getResource("/extra_line1.png");
+
 URL ts1 = SentenceIN.class.getResource("/ts_1.png");
 URL ts2 = SentenceIN.class.getResource("/ts_2.png");
 URL ts3 = SentenceIN.class.getResource("/ts_3.png");
@@ -640,7 +642,7 @@ generate_music_button.addActionListener(new ActionListener() {
 			            	
 							png_measure = ImageIO.read(e_measure_url);  
 							//added rest urls 
-							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, u_half_url, quarter_url, u_quarter_url, eighth_url, u_eighth_url, whole_rest_url, half_rest_url, quarter_rest_url, eighth_rest_url,t_sig.get(0));
+							measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, u_half_url, quarter_url, u_quarter_url, eighth_url, u_eighth_url, whole_rest_url, half_rest_url, quarter_rest_url, eighth_rest_url, extra_line_url, t_sig.get(0));
 
 							//ImageIO.write(png_measure, "jpg", new File(e_measure_url.toString()));
 							
@@ -1369,16 +1371,17 @@ public static BufferedImage joinBufferedImageVertically(BufferedImage img1, Buff
 	    return newImage;
 	  }
 //add notes to a bufferimage of an empty measure
-public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m, URL whole_url, URL half_url,URL u_half_url, URL quarter_url, URL u_quarter_url,URL eighth_url, URL u_eighth_url, URL whole_rest_url, URL half_rest_url, URL quarter_rest_url, URL eighth_rest_url, TimeSignature ts) throws IOException
+public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m, URL whole_url, URL half_url,URL u_half_url, URL quarter_url, URL u_quarter_url,URL eighth_url, URL u_eighth_url, URL whole_rest_url, URL half_rest_url, URL quarter_rest_url, URL eighth_rest_url, URL extra_line_url, TimeSignature ts) throws IOException
 {
 	BufferedImage img_result = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
 	Graphics2D g = (Graphics2D) img_result.getGraphics();
 	g.drawImage(original, 0, 0, null);
 	
-	int [] coords;
+	//int [] coords;
 	int x_coord = 0;
 	int prev_x_coord;
 	BufferedImage bi_note;
+	BufferedImage x_line;
 
 	double ts_condition; 
 	
@@ -1529,6 +1532,19 @@ public static BufferedImage addNotesToMeasure(BufferedImage original, Measure m,
 	
 	prev_x_coord = result[1] - x_coord;
 	x_coord = result[1];
+	
+	
+	
+	if((note.getlabel() == "c" || note.getlabel() == "d") && note.getoctave() == 4)
+	{
+		x_line = ImageIO.read(extra_line_url);
+		g.drawImage(x_line, x_coord - 2, 118, 24, 4, null); //will have to chnage x-coord to a set value
+	}
+	if((note.getlabel() == "a" || note.getlabel() == "b") && note.getoctave() == 5)
+	{
+		x_line = ImageIO.read(extra_line_url);
+		g.drawImage(x_line, x_coord - 2, 13, 24, 4, null); //will have to chnage x-coord to a set value
+	}
 	
 	g.drawImage(bi_note, x_coord, result[2], result[3], result[4], null);
 	
