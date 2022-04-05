@@ -101,7 +101,7 @@ abstract class MusicNote implements Comparable<MusicNote>{
     	//can be both
     	case 5: this.uy_coord = u;break;
     	//only for melody notes
-    	case 6: this.uy_coord = u - octave_ylength;break; //(only A6 and B6)
+    	case 6: this.uy_coord = u - octave_ylength;break; //(only A5 and B5)
     	}
     	
     }
