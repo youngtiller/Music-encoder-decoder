@@ -48,6 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -343,7 +344,7 @@ JButton load_button = new JButton("Load a File");
 load_button.setBounds(30,500,200, 30);
 
 //save music sheet
-JButton save_sheet_button = new JButton("Save JPEG of Music Sheet");
+JButton save_sheet_button = new JButton("Save PNG of Music Sheet");
 save_sheet_button.setBounds(30,550,200, 30);
 
 //play music button
@@ -835,7 +836,374 @@ load_button.addActionListener(new ActionListener() {
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		i_frame.setVisible(true);
+		//i_frame.setVisible(true);
+		JFileChooser filechooser = new JFileChooser();
+		if (JFileChooser.APPROVE_OPTION == filechooser.showOpenDialog(null))
+		{
+			String filename = filechooser.getSelectedFile().getName();
+			System.out.println(filename);
+			
+			if(filename.contains(".png") && filename.contains("enc"))
+				
+			{
+				System.out.println("contains_both");
+				String[] input = filename.split("\\.");
+				filename = input[0];
+				filename = filename.replace("enc", "");
+				System.out.println("Input:" + filename);
+				
+				String u_input = null;
+				
+				u_input = filename;
+				
+				
+				userInput_display.setText(u_input);
+				
+				//sets Newmessage
+				for(int count = 0;count < u_input.length(); count++)
+					{
+						Newmessage.add(u_input.charAt(count));
+					}
+			
+				userInput.setText(null); //clears input (isn't working)
+			
+				//creating note objs
+				//MusicNote list_of_notes [] = MusicNote.getNotes(Newmessage);
+				//MusicNote list_of_notes [] = MusicNote.setNotesXml(Newmessage);
+				list_of_notes = MusicNote.setNotesXml(Newmessage);
+				int x_coord = 260;
+				//int tx_coord = 0;
+				int y_xtra = 0;
+				int [] coords;
+				//randomly assigning rhythm to notes (half,whole, quarter, etc.)
+				Random r = new Random();
+				/*
+				for(int count2 = 0;count2 < list_of_notes.length; count2++)
+					{
+						//needed for when the first 4 bars/frames are filled
+					
+						if(x_coord >= 950)
+							{
+								x_coord = 350;
+								y_xtra = 170;
+					
+							}
+						/*
+				
+						if(tx_coord >= 700)
+							{
+								tx_coord = 0;
+								y_xtra = 170;
+							}
+						 
+				
+						coords = getRandomRhythm(r, list_of_notes, count2, x_coord, y_xtra, notes, panel, i_whole, i_half, i_quarter, i_eighth);
+						//coords = getRandomRhythm(r, list_of_notes, count2, tx_coord, y_xtra, notes, panel, i_whole, i_half, i_quarter, i_eighth);
+						
+						x_coord = coords [0];
+						y_xtra = coords [1];
+						
+						//tx_coord = coords [0];
+						//y_xtra = coords [1];
+						
+					}
+					*/
+						
+						ArrayList<Measure> measures = new ArrayList<Measure>();
+						
+						//sets all rhythms
+						/*
+						for(int count2 = 0;count2 < list_of_notes.length; count2++)
+						{
+							getRandomRhythm(r,list_of_notes,count2, ts);
+						}
+						*/
+						MusicNote.setRhythmXml(list_of_notes, Newmessage, t_sig.get(0));
+						//MusicNote.setRhythmXml(list_of_notes, Newmessage, ts);
+						
+						double measure_beat_count = 0.0;
+						double current_note_beat = 0.0;
+						int measure_count = 0;
+						double num_beats_per_measure = t_sig.get(0).gettop_number();
+						double bottom_number = t_sig.get(0).getbottom_number(); //base rhythm that counts as a beat
+						Measure m = new Measure();
+						measures.add(m);
+						System.out.println("Time Signature: " + num_beats_per_measure + "/" + bottom_number);
+						//for(int count2 = 0;count2 < list_of_notes.length; count2++)
+						for(int count2 = 0;count2 < list_of_notes.size(); count2++)
+						{
+							
+						//switch(list_of_notes[count2].getrhythm())
+							switch(list_of_notes.get(count2).getrhythm())
+							{
+							case "whole":
+								{	
+									current_note_beat = bottom_number;
+									measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1
+						
+									break;
+								}
+							case "half":
+								{
+									current_note_beat = bottom_number/2.0;
+									measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/2
+									
+									break;
+								}
+							case "quarter":
+								{
+									current_note_beat = bottom_number/4.0;
+									measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/4
+									
+									break;
+								}
+							case "eighth":
+								{
+									current_note_beat = bottom_number/8.0;
+									measure_beat_count = measure_beat_count + current_note_beat; // 4/4: 1/8
+									
+									break;
+								}
+							}
+						
+						if(measure_beat_count <= num_beats_per_measure)
+						{
+							//add note to current bar
+							//measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+							measures.get(measure_count).getnotes().add(list_of_notes.get(count2));
+							System.out.println("Within measure: " + measure_beat_count);
+						}
+						else if(measures.size() == 1 && measures.get(0).getnotes().size() == 0) //first measure
+						{
+							//add note to first measure
+							//measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+							measures.get(measure_count).getnotes().add(list_of_notes.get(count2));
+							//create new bar
+							Measure m1 = new Measure();
+							//add bar to bars
+							measures.add(m1);
+							//add to measure count
+							measure_count++;
+							//set counts
+							measure_beat_count = current_note_beat; //should set to correct amount of beats the note has
+							System.out.println("New first measure: " + measure_beat_count);
+						}
+						else //first note of measure (for any measure except first measure)
+						{
+							
+							measure_count++;
+							
+							//create new bar
+							Measure m1 = new Measure();
+							//add bar to bars
+							measures.add(m1);
+							//add note to new bar
+							//measures.get(measure_count).getnotes().add(list_of_notes[count2]);
+							measures.get(measure_count).getnotes().add(list_of_notes.get(count2));
+							//set counts
+							measure_beat_count = current_note_beat; //should set to correct amount of beats the note has
+							System.out.println("New measure: " + measure_beat_count);
+						}
+						
+						
+						
+							//if(x_coord >= 950)
+								//{
+								//	x_coord = 350;
+								//	y_xtra = 170;
+						
+								//}
+							/*
+					
+							if(tx_coord >= 700)
+								{
+									tx_coord = 0;
+									y_xtra = 170;
+								}
+							 */
+					
+							//coords = get_setRandomRhythm(r, list_of_notes, count2, x_coord, y_xtra, notes, panel, i_whole, i_half, i_quarter, i_eighth);
+							//coords = getRandomRhythm(r, list_of_notes, count2, tx_coord, y_xtra, notes, panel, i_whole, i_half, i_quarter, i_eighth);
+							
+							//x_coord = coords [0];
+							//y_xtra = coords [1];
+							/*
+							tx_coord = coords [0];
+							y_xtra = coords [1];
+							*/
+						}
+				
+						//print out all bars
+						URL e_measure_url = SentenceIN.class.getResource("/empty_measure.png");
+						BufferedImage png_measure;
+						BufferedImage measure_w_notes;
+						
+						String str ="Sheet :\n";
+						BufferedImage measure_w_ts;
+						BufferedImage png_ts;
+						
+						EmptyBorder e_border = new EmptyBorder(0,0,0,0);
+						
+						ImageIcon i_w_ts;
+						JLabel jl_w_ts;
+						try {
+							png_ts = ImageIO.read(ts_url);
+							try {
+								
+								measure_w_ts = addTSToClef(png_ts, t_sig.get(0), ts1,ts2,ts3,ts4,ts5,ts6,ts7,ts8,ts9);
+								System.out.println("ts was added graphically\n");
+								t_sig.get(0).setimg(measure_w_ts);
+								i_w_ts = new ImageIcon(measure_w_ts);
+								jl_w_ts = new JLabel(i_w_ts);
+								jl_w_ts.setBorder(e_border);
+								//jl_m.setBounds(0,0,2000,300);
+								jl_w_ts.setSize(90,300);
+								measures_panel.add(jl_w_ts);//adding clef and time signature
+								
+							} catch (IOException e2) {
+								// TODO Auto-generated catch block
+								e2.printStackTrace();
+							}
+						} catch (IOException e3) {
+							// TODO Auto-generated catch block
+							e3.printStackTrace();
+						}
+					
+						ImageIcon i_m;
+						JLabel jl_m;
+						
+				    	for (Measure m1 : measures) {
+				            str = str + m1;
+				            try {
+				            	
+								png_measure = ImageIO.read(e_measure_url);  
+								//added rest urls 
+								measure_w_notes = addNotesToMeasure(png_measure, m1, whole_url, half_url, u_half_url, quarter_url, u_quarter_url, eighth_url, u_eighth_url, whole_rest_url, half_rest_url, quarter_rest_url, eighth_rest_url, extra_line_url, t_sig.get(0));
+
+								//ImageIO.write(png_measure, "jpg", new File(e_measure_url.toString()));
+								
+								bi_measures.add(measure_w_notes); //may be redundant
+								
+								i_m = new ImageIcon(measure_w_notes);
+								jl_m = new JLabel(i_m);
+								jl_m.setBorder(e_border);
+								//jl_m.setBounds(0,0,2000,300);
+								jl_m.setSize(175,300);
+								measures_panel.add(jl_m);
+								
+								measures_panel.setAutoscrolls(true);
+								 
+								System.out.println("added measure to arraylist\n");
+								
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+				        }
+				 	   System.out.println(str);
+				 	   
+				 	   	measures_panel.setVisible(true);
+						measures_panel.repaint();
+						
+						//s_pane = new JScrollPane(measures_panel);
+						s_pane.setViewportView(measures_panel);
+						s_pane.setBounds(x,y,700,300);
+						
+						s_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+						s_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+						s_pane.setVisible(true);
+						
+						panel.add(s_pane);
+		
+				
+			try {
+				setToJpg(frame, music_sheet, w, h, t_sig.get(0));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} //sets buffered image
+			/*
+			//b_image
+			//File file = new File("pics/generated_music_sheet.png");
+			File file = new File("pics/generated_music_sheet.png");
+			try {
+				ImageIO.write(b_image, "png", file);
+				System.out.println("Image written when generated");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			URL p_m_sheet_url = SentenceIN.class.getResource("/generated_music_sheet.png");
+			
+			ImageIcon p_m_sheet;
+			try {
+				p_m_sheet = new ImageIcon(file.toURI().toURL());
+				//ImageIcon p_m_sheet = new ImageIcon(p_m_sheet_url);
+				JLabel p_music_sheet_l = new JLabel(p_m_sheet);
+				//i may have to set size (i can do ths based upon the amount of measures)
+				
+		        
+				JPanel p = new JPanel();
+				p.setSize(1000,300);
+				
+				p_music_sheet_l.setBounds(0,0,2000,300);
+				p.add(p_music_sheet_l);
+				/*
+				JLabel music_sheet2 = new JLabel(i_m_sheet);
+				music_sheet2.setBounds(0,0,700,300);
+				p.add(music_sheet2);
+				JLabel music_sheet3 = new JLabel(i_m_sheet);
+				music_sheet3.setBounds(700,0,700,300);
+				p.add(music_sheet3);
+				
+				
+				
+				
+				JScrollPane s_pane = new JScrollPane(p);
+				s_pane.setBounds(x,y,700,300);
+				//s_pane.setBounds(x,y,w,h);
+				//s_pane.setLocation(x,y);
+	/*
+				JViewport vp = new JViewport();
+				//Dimension vp_size = new Dimension(w/2, h);
+				Dimension vp_size = new Dimension(200, 300);
+				vp.setViewSize(vp_size);
+				vp.setViewPosition(new Point(0, 0));
+				
+				s_pane.setViewport(vp);
+				
+				s_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+				s_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+				s_pane.setVisible(true);
+				panel.add(s_pane);
+				
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			*/
+			//panel.add(music_sheet);
+			play_button.setVisible(true);
+			stop_button.setVisible(true);
+			System.out.println("Components in panel: " + measures_panel.getComponentCount());
+			panel.repaint();
+			
+			
+			//frame.setVisible(true);
+		
+				
+				
+			}
+			else
+			{
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
+		
 	}
 });
 
@@ -856,10 +1224,17 @@ save_sheet_button.addActionListener(new ActionListener() {
 		JTextField record_name = new JTextField();
 		record_name.setBounds(50,0,200,30);
 		*/
+		/*
+		Boolean old = UIManager.getBoolean("FileChooser.readOnly");  
+		UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+		JFileChooser save_file = new JFileChooser(".");
+		UIManager.put("FileChooser.readOnly", old);
+		*/
 		JFileChooser save_file = new JFileChooser();
 		save_file.setBounds(frame.getX() + 300, frame.getY() + 200,400,400);
 		
 		save_file.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		/*new *///save_file.setSelectedFile(new File("fileToSave.png"));
 		
 		panel.add(save_file);
 		panel.repaint();
@@ -870,6 +1245,8 @@ save_sheet_button.addActionListener(new ActionListener() {
 		
 		i_frame.setVisible(true);
 		*/
+		
+		
 		int fc_result = save_file.showSaveDialog(i_frame);
 		if (fc_result == JFileChooser.APPROVE_OPTION) 
 		{
@@ -884,8 +1261,12 @@ save_sheet_button.addActionListener(new ActionListener() {
 			else
 				{
 				System.out.println("Saving file");
-				String file_location = save_file.getSelectedFile().getAbsolutePath()+ name_input;
-				//String filename = save_file.getSelectedFile().getName();
+				//String enc_name = "enc84u0yrhh.png";
+				String enc_name = fileNamer();
+				String file_location = save_file.getSelectedFile().getAbsolutePath()/*+ enc_name name_input*/;
+				String filename = save_file.getSelectedFile().getName();
+				file_location = file_location.replace(filename, "");
+				file_location = file_location + enc_name;
 				saveToJpg(b_image, file_location);
 				}
 		} 
@@ -1694,7 +2075,11 @@ public static double [] getTimeSignatureXml() throws ParserConfigurationExceptio
 
 public static String fileNamer()
 {
-	return "music_sheet_sc" + ss_counter + ".jpg";
+	String name = "";
+	for (Character c : Newmessage) { 		      
+        name = name + c; 		
+   }
+	return "enc" + name + ".png";
 }
 
 

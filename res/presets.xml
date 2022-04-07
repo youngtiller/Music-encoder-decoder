@@ -45,8 +45,8 @@
 <!-- Octave-->
 <C3>hHwW</C3>
 <D3>iIxX</D3>
-<E3>jJyY</E3>
-<F3>kKzZ</F3>
+<E3>jJyY-</E3>
+<F3>kKzZ_</F3>
 <G3>lL!?</G3>
 <A3>mM.;</A3>
 <B3>nN,:</B3>
@@ -55,8 +55,8 @@
 
 <Rhythm>
 <!-- determined by a rule: first rhythm in measure for note n is character of note n+1, to satisfy measure fulfillment, the remaining rhythm notes for the measure are determined the same way but will be the next rhythm below rhythm selected if rhythm selected doesn't fit in the measure. Ex. user input = love,  rhythm first note = half since 'o', rhythm second note = half since 'u' = whole but too big so half. -->
-<whole>uvwxyzUVWXYZ01234</whole>
-<half>opqrstOPQRST56789</half>
+<whole>uvwxyzUVWXYZ01234-</whole>
+<half>opqrstOPQRST56789_</half>
 <quarter>hijklmnHIJKLMN!?:</quarter>
 <eighth>abcdefgABCDEFG;,.</eighth>
 
