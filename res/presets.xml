@@ -58,7 +58,7 @@
 <whole>uvwxyzUVWXYZ01234-</whole>
 <half>opqrstOPQRST56789_</half>
 <quarter>hijklmnHIJKLMN!?:</quarter>
-<eighth>abcdefgABCDEFG;,.</eighth>
+<eighth>abcdefgABCDEFG;,. </eighth>
 
 <!-- optional-->
 <sixteenth></sixteenth>
