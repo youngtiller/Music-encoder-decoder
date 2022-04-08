@@ -74,25 +74,11 @@ import java.lang.Double;
 public class SentenceIN {
 	
 	public static void main(String[] args) {
-		/*
-		Scanner kb = new Scanner(System.in);
-		Scanner inputStream = null;
-		PrintWriter outputStream = null;
-		//wouldn't it be eaasier to use an ArrayList<MusicNote> ?
-		MusicNote list_of_notes[] = new MusicNote[5];// (5 only there for testing) get size of message later
-		int option = 0;
-		String sentence;
-		*/
-		//only here for testing
+		
 		JFrame f = new JFrame();
 		JPanel p = new JPanel();
 		startGraphics(f,p);
 		
-		
-		
-		/*
-
-				*/
 	}
 	//changed to static
 	public static ArrayList<Character> Newmessage = new ArrayList<Character>();
@@ -435,7 +421,7 @@ generate_music_button.addActionListener(new ActionListener() {
 			//creating note objs
 			//MusicNote list_of_notes [] = MusicNote.getNotes(Newmessage);
 			//MusicNote list_of_notes [] = MusicNote.setNotesXml(Newmessage);
-			list_of_notes = MusicNote.setNotesXml(Newmessage);
+			list_of_notes = MusicNote.setNotesXml(Newmessage, scaleChooser(u_input));
 			int x_coord = 260;
 			//int tx_coord = 0;
 			int y_xtra = 0;
@@ -770,6 +756,7 @@ clear_music_button.addActionListener(new ActionListener() {
 		notes.clear();
 		Newmessage.clear();
 		bi_measures.clear();
+		//t_sig.clear(); //clear time signature
 		measures_panel.removeAll();
 		measures_panel.revalidate();
 		measures_panel.repaint();
@@ -870,7 +857,8 @@ load_button.addActionListener(new ActionListener() {
 				//creating note objs
 				//MusicNote list_of_notes [] = MusicNote.getNotes(Newmessage);
 				//MusicNote list_of_notes [] = MusicNote.setNotesXml(Newmessage);
-				list_of_notes = MusicNote.setNotesXml(Newmessage);
+				
+				list_of_notes = MusicNote.setNotesXml(Newmessage,scaleChooser(u_input));
 				int x_coord = 260;
 				//int tx_coord = 0;
 				int y_xtra = 0;
@@ -1053,6 +1041,9 @@ load_button.addActionListener(new ActionListener() {
 								measure_w_ts = addTSToClef(png_ts, t_sig.get(0), ts1,ts2,ts3,ts4,ts5,ts6,ts7,ts8,ts9);
 								System.out.println("ts was added graphically\n");
 								t_sig.get(0).setimg(measure_w_ts);
+								
+								BufferedImage b = t_sig.get(0).getimg();
+								
 								i_w_ts = new ImageIcon(measure_w_ts);
 								jl_w_ts = new JLabel(i_w_ts);
 								jl_w_ts.setBorder(e_border);
@@ -2082,6 +2073,63 @@ public static String fileNamer()
 	return "enc" + name + ".png";
 }
 
+
+
+public static int wordlistCounter(String filename, String user_input)
+{
+	int count =0;
+	 try {
+	      File myObj = new File(filename);
+	      Scanner myReader = new Scanner(myObj);
+	      while (myReader.hasNextLine()) {
+	        String data = myReader.nextLine();
+	        if(user_input.contains(data))
+	        {
+	        	count++;
+	        }
+	      }
+	      myReader.close();
+	    } catch (FileNotFoundException e) {
+	      System.out.println("An error occurred.");
+	      e.printStackTrace();
+	    }
+	 return count;
+}
+
+//output, scale to use 
+public static String [] scaleChooser(String user_input)
+{
+	
+	
+	String [] C45major_scale = {"C4.wav","D4.wav","E4.wav","F4.wav","G4.wav","A4.wav","B4.wav","C5.wav","D5.wav","E5.wav","F5.wav","G5.wav","A5.wav","B5.wav"};
+	String [] Cminor_scale = {"C4.wav","D4.wav","Eb4.wav","F4.wav","G4.wav","Ab4.wav","Bb4.wav","C5.wav","D5.wav","Eb5.wav","F5.wav","G5.wav","Ab5.wav","Bb5.wav"};
+	String [] C56major_scale = {"C5.wav","D5.wav","E5.wav","F5.wav","G5.wav","A5.wav","B5.wav","C6.wav","D6.wav","E6.wav","F6.wav","G6.wav","A6.wav","B6.wav"};
+	
+	int negative_count = wordlistCounter("res/negative-words.txt", user_input);
+	int positive_count = wordlistCounter("res/positive-words.txt", user_input);
+	
+	
+	if(negative_count > positive_count) //negative user input
+	{
+		System.out.println("\n\nCminor_scale: "+ negative_count + "\n\n");
+	 return Cminor_scale;
+	 
+	}
+	else if(negative_count < positive_count) //positive user input
+	{
+		System.out.println("\n\n56major_scale: "+ positive_count + "\n\n");
+		return C56major_scale;
+		
+	}
+	else
+	{
+		System.out.println("\n\nCmajor45_scale: \n n:"+ negative_count + "\np:"+ positive_count +"\n\n");
+		return C45major_scale;  //neutral user input
+		
+}
+
+
+}
 
 
 /*
