@@ -3,8 +3,7 @@ import java.util.ArrayList;
 public class Measure {
 	
 		// Attributes
-		private ArrayList <MusicNote> notes = new ArrayList <MusicNote>(); // notes that fit in the bar
-		   
+		private ArrayList <MusicNote> notes = new ArrayList <MusicNote>(); // notes that fit in one measure
 		    
 		//Constructors
 		
@@ -15,7 +14,6 @@ public class Measure {
 		public Measure (ArrayList <MusicNote> n)
 		  {
 		    notes = n;
-		    	
 		  }
 		//getter
 	    public ArrayList <MusicNote> getnotes(){
@@ -30,7 +28,7 @@ public class Measure {
 	  //necessary for testing
 	    public String toString()
 	    {
-	    		String str ="Bar :\n";
+	    		String str ="Measure :\n";
 	    	for (MusicNote note : notes) {
 	            str = str + note;
 	        }

@@ -3,8 +3,8 @@ import java.awt.image.BufferedImage;
 public class TimeSignature {
 
 	// Attributes
-	private double top_number;
-	private double bottom_number;
+	private double top_number; // amount of beats in a measure
+	private double bottom_number; //defualt note for what counts as a beat (ex. 4 -> quarter note)
 
 	
 	//for saving as image
