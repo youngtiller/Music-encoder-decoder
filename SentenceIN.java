@@ -1,54 +1,32 @@
-import java.awt.AWTException;
+
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
-
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JViewport;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -62,35 +40,25 @@ import org.xml.sax.SAXException;
 
 import java.lang.Double;
 
-//import sun.audio.AudioPlayer;
 
-/*Notes:
- * encoding table 
- * divide into bars (frames)
- * 
- * 
- * 
- */
 public class SentenceIN {
 	
 	//GLOBAL ATTRIBUTES
-	
+	//where user input is saved to
 	public static ArrayList<Character> Newmessage = new ArrayList<Character>();
-	
 	//for appending buffered images
 	public static ArrayList<BufferedImage> bi_measures = new ArrayList<BufferedImage>();
 	//save sheet counter (necessary to uniquely name files
 	public static int ss_counter = 0;
-
+	//music notes are created to
 	public static ArrayList<MusicNote> list_of_notes = new ArrayList<MusicNote>();
-	
 	//needed for clearing music
 	public static JPanel measures_panel = new JPanel();
-	
 	//for display music sheet
 	public static JScrollPane s_pane = new JScrollPane(); 
 	//needed for screen capture
 	public static BufferedImage b_image; 
+	
 	
 	public static void main(String[] args) {
 		
@@ -100,6 +68,7 @@ public class SentenceIN {
 		
 		}
 
+	// plays sound of a single note for correct duration (rhythm)
 	public static int playSound(MusicNote note, TimeSignature ts, boolean flag, int counter){ //plays sounds
 		try{
 			
@@ -138,11 +107,8 @@ public class SentenceIN {
 	}
 
 //creates starting graphics 
-
 public static void startGraphics(JFrame frame, JPanel panel)
 {
-
-Thread play_stop = Thread.currentThread();
 
 frame.setName("Music Encoder");
 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -157,8 +123,6 @@ panel.setBackground(Color.darkGray);
 
 //needed to clear notes 
 ArrayList<JLabel> notes = new ArrayList<JLabel>();
-
-int tempo = 1; // used for playback speed of music sheet (currently hard-coded)
 
 measures_panel.setSize(2000,300); //testing
 measures_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -219,22 +183,14 @@ int x = 250, y = 250, w = 700, h = 300;
 music_sheet.setBounds(x,y,w,h);
 //JComponent for rhythm note "whole"
 URL whole_url = SentenceIN.class.getResource("/whole_note.png");
-ImageIcon i_whole = new ImageIcon(whole_url);
-
 //JComponent for rhythm note "half"
 URL half_url = SentenceIN.class.getResource("/half_note.png");
-ImageIcon i_half = new ImageIcon(half_url);
-
 URL u_half_url = SentenceIN.class.getResource("/u_half_note.png");
 //JComponent for rhythm note "quarter"
 URL quarter_url = SentenceIN.class.getResource("/quarter_note.png");
-ImageIcon i_quarter = new ImageIcon(quarter_url);
-
 URL u_quarter_url = SentenceIN.class.getResource("/u_quarter_note.png");
 //JComponent for rhythm note "eighth"
 URL eighth_url = SentenceIN.class.getResource("/eighth_note2.png");
-ImageIcon i_eighth = new ImageIcon(eighth_url);
-
 URL u_eighth_url = SentenceIN.class.getResource("/u_eighth_note2.png");
 
 
@@ -243,6 +199,7 @@ URL half_rest_url = SentenceIN.class.getResource("/half_rest.png");
 URL quarter_rest_url = SentenceIN.class.getResource("/quarter_rest.png");
 URL eighth_rest_url = SentenceIN.class.getResource("/eighth_rest.png");
 
+//to put extra line for notes that exceed the music sheet lines (above or below)
 URL extra_line_url = SentenceIN.class.getResource("/extra_line1.png");
 
 URL ts1 = SentenceIN.class.getResource("/ts_1.png");
@@ -274,10 +231,6 @@ generate_music_button.setBounds(30,300,200, 30);
 JButton clear_music_button = new JButton("Clear Music");
 clear_music_button.setBounds(30,250,200, 30);
 
-//update existing record
-JButton update_record_button = new JButton("Update Record"); 
-update_record_button.setBounds(30,400,200, 30);
-
 //load file
 JButton load_button = new JButton("Load a File");
 load_button.setBounds(30,500,200, 30);
@@ -288,13 +241,9 @@ save_sheet_button.setBounds(30,550,200, 30);
 
 //play music button
 JButton play_button = new JButton("Play");
-play_button.setBounds(350,600,200, 30);
+play_button.setBounds(500,600,200, 30);
 play_button.setVisible(false); //invisible when until music generated
 
-//stop music button
-JButton stop_button = new JButton("Stop");
-stop_button.setBounds(600,600,200, 30);
-stop_button.setVisible(false); //invisible when until music generated
 //exit (idk if neccessary)
 JButton exit_button = new JButton("Exit");
 exit_button.setForeground(Color.red);
@@ -306,13 +255,9 @@ panel.add(userInput);
 panel.add(userInput_display);
 panel.add(generate_music_button);
 panel.add(clear_music_button);
-//panel.add(new_record_button);
-panel.add(update_record_button);
-//panel.add(save_button);
 panel.add(load_button);
 panel.add(save_sheet_button);
 panel.add(play_button);
-panel.add(stop_button);
 panel.add(exit_button);
 
 
@@ -320,11 +265,9 @@ frame.setContentPane(panel);
 frame.setVisible(true);
 
 
-// currently only generates melody and rhythm is randomly assigned
-/*TODO
- * make notes in groups of frames(only put a rhythm that can fit)
- * add rests as an option
- * Put it on a jscrollpane that automatically scrolls with the tempo
+/* creates music sheet and displays in app
+ * make notes in groups of measures(only put a rhythm that can fit)
+ * Put it on a JScrollpane that automatically scrolls with the music
  */
 generate_music_button.addActionListener(new ActionListener() {
 	
@@ -532,18 +475,16 @@ generate_music_button.addActionListener(new ActionListener() {
 			e1.printStackTrace();
 		} //sets buffered image
 		
-		//panel.add(music_sheet);
 		play_button.setVisible(true);
-		stop_button.setVisible(true);
 		System.out.println("Components in panel: " + measures_panel.getComponentCount());
 		panel.repaint();
 		
 		
-		//frame.setVisible(true);
 	}
 	
 });
 
+// clears music sheet from application(must be called before loading music sheet (if there's a music sheet populating app) or generating new music sheet
 clear_music_button.addActionListener(new ActionListener() {
 	
 	public void actionPerformed(ActionEvent e)
@@ -560,54 +501,15 @@ clear_music_button.addActionListener(new ActionListener() {
 		measures_panel.revalidate();
 		measures_panel.repaint();
 		play_button.setVisible(false);
-		stop_button.setVisible(false);
 		
 	}
 });
 
-//generate music + save file will be sufficient (don't need this button)
-new_record_button.addActionListener(new ActionListener() {
-	
-	public void actionPerformed(ActionEvent e)
-	{
-		i_panel.removeAll();
-		
-		JTextField record_name = new JTextField("Name: ");
-		record_name.setBounds(50,0,200,30);
-
-
-		i_panel.add(record_name);
-		
-		i_panel.repaint();
-		
-		i_frame.setVisible(true);
-		
-	}
-});
-
-//might wanna delete this
-update_record_button.addActionListener(new ActionListener() {
-	
-	public void actionPerformed(ActionEvent e)
-	{
-		i_panel.removeAll();
-		
-		JFileChooser record_file = new JFileChooser();
-		record_file.setBounds(25,0,250,250);
-		
-		i_panel.add(record_file);
-		i_panel.repaint();
-		
-		i_frame.setVisible(true);
-	}
-});
-
-//(id imagine it would be the save as save button) what components of the song are being loaded? audio file? music sheet? both? 
+//loads music from a png file that was generated from this application
 load_button.addActionListener(new ActionListener() {
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		//i_frame.setVisible(true);
 		JFileChooser filechooser = new JFileChooser();
 		if (JFileChooser.APPROVE_OPTION == filechooser.showOpenDialog(null))
 		{
@@ -641,13 +543,6 @@ load_button.addActionListener(new ActionListener() {
 				//creating note objs
 				
 				list_of_notes = MusicNote.setNotesXml(Newmessage,scaleChooser(u_input));
-				int x_coord = 260;
-				//int tx_coord = 0;
-				int y_xtra = 0;
-				int [] coords;
-				//randomly assigning rhythm to notes (half,whole, quarter, etc.)
-				Random r = new Random();
-				
 						
 						ArrayList<Measure> measures = new ArrayList<Measure>();
 						
@@ -661,7 +556,7 @@ load_button.addActionListener(new ActionListener() {
 						Measure m = new Measure();
 						measures.add(m);
 						System.out.println("Time Signature: " + num_beats_per_measure + "/" + bottom_number);
-						//for(int count2 = 0;count2 < list_of_notes.length; count2++)
+						
 						for(int count2 = 0;count2 < list_of_notes.size(); count2++)
 						{
 							
@@ -757,7 +652,6 @@ load_button.addActionListener(new ActionListener() {
 								System.out.println("ts was added graphically\n");
 								t_sig.get(0).setimg(measure_w_ts);
 								
-								BufferedImage b = t_sig.get(0).getimg();
 								
 								i_w_ts = new ImageIcon(measure_w_ts);
 								jl_w_ts = new JLabel(i_w_ts);
@@ -790,7 +684,6 @@ load_button.addActionListener(new ActionListener() {
 								i_m = new ImageIcon(measure_w_notes);
 								jl_m = new JLabel(i_m);
 								jl_m.setBorder(e_border);
-								//jl_m.setBounds(0,0,2000,300);
 								jl_m.setSize(175,300);
 								measures_panel.add(jl_m);
 								
@@ -808,7 +701,6 @@ load_button.addActionListener(new ActionListener() {
 				 	   	measures_panel.setVisible(true);
 						measures_panel.repaint();
 						
-						//s_pane = new JScrollPane(measures_panel);
 						s_pane.setViewportView(measures_panel);
 						s_pane.setBounds(x,y,700,300);
 						
@@ -828,7 +720,6 @@ load_button.addActionListener(new ActionListener() {
 			
 			//panel.add(music_sheet);
 			play_button.setVisible(true);
-			stop_button.setVisible(true);
 			System.out.println("Components in panel: " + measures_panel.getComponentCount());
 			panel.repaint();
 			
@@ -847,6 +738,7 @@ load_button.addActionListener(new ActionListener() {
 	}
 });
 
+//saves music sheet to png using a JFileChooser
 save_sheet_button.addActionListener(new ActionListener() {
 	
 	public void actionPerformed(ActionEvent e)
@@ -887,7 +779,7 @@ save_sheet_button.addActionListener(new ActionListener() {
 				String filename = save_file.getSelectedFile().getName();
 				file_location = file_location.replace(filename, "");
 				file_location = file_location + enc_name;
-				saveToJpg(b_image, file_location);
+				saveToPNG(b_image, file_location);
 				}
 		} 
 		else if (fc_result == JFileChooser.CANCEL_OPTION) 
@@ -898,7 +790,7 @@ save_sheet_button.addActionListener(new ActionListener() {
 		
 	}
 });
-//autoscrolls jscrollpane from what the current view is (not the best solution)
+//plays music on current music sheet and automatically scrolls with playback
 play_button.addActionListener(new ActionListener() {
 
 	public void actionPerformed(ActionEvent e)
@@ -931,19 +823,8 @@ play_button.addActionListener(new ActionListener() {
 	}
 });
 
-//can't be called during a play_button actionperformed method
-stop_button.addActionListener(new ActionListener() {
-	
-	public void actionPerformed(ActionEvent e)
-	{
-		int x = (int)s_pane.getViewport().getViewRect().getX();
-		Rectangle r = new Rectangle(x,0, 1, 1);
-		measures_panel.scrollRectToVisible(r);
-	}
-});
 
-
-
+//exits application
 exit_button.addActionListener(new ActionListener() {
 	
 	public void actionPerformed(ActionEvent e)
@@ -952,93 +833,7 @@ exit_button.addActionListener(new ActionListener() {
 	}
 });
 }
-//not in current use
-public static int [] get_setRandomRhythm (Random r, MusicNote [] list_of_notes, int count2, int x_coord, int y_xtra, ArrayList<JLabel> notes, JPanel panel, ImageIcon i_whole, ImageIcon i_half, ImageIcon i_quarter, ImageIcon i_eighth )
-{
-	
-	int random = r.nextInt(4);//0-3(inclusive)
-	switch(random)
-	{
-	case 0: 
-	{
-		list_of_notes [count2].setrhythm("whole");
-		System.out.println(list_of_notes[count2]);
-		
-		x_coord = x_coord + 82;
-		JLabel whole_label = new JLabel(i_whole); //new changed to static variable
-		whole_label.setBounds(x_coord,list_of_notes [count2].gety_coord()+ y_xtra,20,20);
-		
-		x_coord = x_coord + 82;
-		
-		notes.add(whole_label);
-		panel.add(whole_label);
-		int [] coords= {x_coord, y_xtra};
-		return coords;
-		
-	}
-	
-	case 1: 
-	{
-		list_of_notes[count2].setrhythm("half");
-		System.out.println(list_of_notes[count2]);
-		
-		x_coord = x_coord + 36;
-		
-		JLabel half_label = new JLabel(i_half); //new changed to static variable
-		half_label.setBounds(x_coord,(list_of_notes [count2].gety_coord() + y_xtra -40),40,60);
-		
-		x_coord = x_coord + 36;
-		
-		
-		notes.add(half_label);
-		panel.add(half_label);
 
-		
-		int [] coords= {x_coord, y_xtra};
-		return coords;
-	
-	}
-	case 2: 
-	{
-		list_of_notes[count2].setrhythm("quarter");
-		System.out.println(list_of_notes[count2]);
-		x_coord = x_coord + 17;
-
-		
-		JLabel quarter_label = new JLabel(i_quarter); //new changed to static variable
-		quarter_label.setBounds(x_coord,(list_of_notes [count2].gety_coord()+ y_xtra -40),20,60);
-		
-		x_coord = x_coord + 17;
-		
-		notes.add(quarter_label);
-		panel.add(quarter_label);
-		int [] coords= {x_coord, y_xtra};
-		return coords;
-	
-	}
-		
-	case 3: 
-	{
-		list_of_notes [count2].setrhythm("eighth");
-		System.out.println(list_of_notes[count2]);
-		
-		x_coord = x_coord + 9;
-	
-		JLabel eighth_label = new JLabel(i_eighth); //new changed to static variable
-		eighth_label.setBounds(x_coord,(list_of_notes [count2].gety_coord()+ y_xtra -40),40,60);
-	
-		x_coord = x_coord + 9;
-		notes.add(eighth_label);
-		panel.add(eighth_label);
-		
-		int [] coords= {x_coord, y_xtra};
-		return coords;
-		
-	}
-	default: { int [] coords= {x_coord, y_xtra}; return coords; } //case shouldn't happen
- }
-
-}
 
 /* return: 
  * int array should always be of size 5: 
@@ -1048,6 +843,7 @@ public static int [] get_setRandomRhythm (Random r, MusicNote [] list_of_notes, 
  * arr [3] (width)
  * arr [4] (length)
  */
+// calculates the spacing of a not on a measure's BufferedImage
 public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, double ts_condition)
 {
 	if(note.getlabel() == "rest")
@@ -1125,84 +921,6 @@ public static int [] setMeasureBufferedImage(MusicNote note, int x_coord, double
 }
 
 
-public static void getRandomRhythm (Random r, MusicNote [] list_of_notes, int count2, TimeSignature ts)
-{
-	int ts_condition;
-	if(ts.gettop_number() * 2 == ts.getbottom_number()) // means no whole notes
-	{
-		ts_condition = 3;
-	}
-	else
-	{
-		ts_condition = 4;
-	}
-	int random = r.nextInt(ts_condition);//0- (ts_condition -1) (inclusive)
-	switch(random)
-	{
-	case 0: 
-		{
-		list_of_notes [count2].setrhythm("eighth");
-		System.out.println(list_of_notes[count2]);
-		break;
-		}
-	
-	case 1: 
-		{
-		list_of_notes[count2].setrhythm("quarter");
-		System.out.println(list_of_notes[count2]);
-		break;
-		}
-	case 2: 
-		{
-		list_of_notes[count2].setrhythm("half");
-		System.out.println(list_of_notes[count2]);	
-		break;
-		}
-		
-	case 3: 
-		{
-		list_of_notes [count2].setrhythm("whole");
-		System.out.println(list_of_notes[count2]);
-		break;	
-		}
-	default: //case shouldn't happen
-		{ 
-		break;
-	
-		} 
-	}
-
-}
-
-
-
-
-// not in current use
-public static void setToSSJpg(JFrame frame, JLabel music_sheet, int w, int h)
-{
-	System.out.println("load button pressed");
-	Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
-	int screen_height = (int)screen_size.getHeight();
-	int screen_width = (int)screen_size.getWidth();
-	int rx = frame.getX() + music_sheet.getX();
-	int ry = frame.getY() + music_sheet.getY();
-	
-	if((screen_width - rx) < w || (screen_height - ry) < h) // to make sure music_sheet component is fully visible b4 screenshot
-	{
-		return ; // doesn't create image 
-	}
-	Rectangle rec = new Rectangle(rx,ry,w,h);
-	try {
-		Robot r = new Robot();
-		BufferedImage bi = r.createScreenCapture(rec);
-		b_image = bi;
-		
-	} catch (AWTException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-		System.out.println("exception caught");
-	}
-}
 //used to save note populated music sheet to jpg
 /*image file should be made in the format of n amount of rows with 
  * 4 columns (bufferedImage measures) each. If not given an amount 
@@ -1222,18 +940,22 @@ public static void setToJpg(JFrame frame, JLabel music_sheet, int w, int h, Time
 		b_image = ts.getimg();
 		int measure_count = bi_measures.size();
 		System.out.println("measure size " + measure_count + "\n");
-		int phrase_count = measure_count/4; //remainder is truncated		
 		
+		int phrase_count = measure_count/4; //remainder is truncated	
+			
+		System.out.println("Phrase count: " + phrase_count);
 		//should group all measures into phrases
-		for(int count = 0; count < phrase_count; count ++)
+		for(int count = 0; count < phrase_count; count++)
 		{
 			if(count == 0)
 			{
 				b_image = ts.getimg();
+				System.out.println("Setting ts image to beginning of phrase");
 			}
 			else
 			{
 				b_image = empty_ts; 
+				System.out.println("Setting empty ts image to beginning of phrase");
 			}
 			
 			for(int count2 = 0; count2 < 4; count2 ++)
@@ -1248,7 +970,17 @@ public static void setToJpg(JFrame frame, JLabel music_sheet, int w, int h, Time
 		if(measure_count != phrase_count*4) //bc truncated
 		{
 			int xtra_measures = measure_count - phrase_count*4;
-			b_image = empty_ts;
+			
+			if(phrase_count == 0)
+			{
+				b_image = ts.getimg();
+			}
+			else
+			{
+				b_image = empty_ts;
+			}
+			
+			
 			
 			for(int count3 = 0; count3 < xtra_measures; count3 ++) //iterates max twice  
 				{
@@ -1273,8 +1005,8 @@ public static void setToJpg(JFrame frame, JLabel music_sheet, int w, int h, Time
 		
 }
 
-//used to save note populated music sheet to jpg
-public static void saveToJpg(BufferedImage bi, String file_location)
+//used to save note populated music sheet of type BufferedImage to png
+public static void saveToPNG(BufferedImage bi, String file_location)
 {
 			
 		File outputfile = new File(file_location);
@@ -1292,6 +1024,7 @@ public static void saveToJpg(BufferedImage bi, String file_location)
 }
 
 
+// horizontally joins measures in a phrase
 public static BufferedImage joinBufferedImageHorizontally(BufferedImage img1, BufferedImage img2) 
 {
 	    int offset = 0;
@@ -1308,7 +1041,7 @@ public static BufferedImage joinBufferedImageHorizontally(BufferedImage img1, Bu
 	    g.dispose();
 	    return newImage;
 	  }
-
+//vertically joins phrases on a music sheet
 public static BufferedImage joinBufferedImageVertically(BufferedImage img1, BufferedImage img2) 
 {
 	    int offset = 0;
@@ -1535,6 +1268,7 @@ public static BufferedImage addTSToClef(BufferedImage original, TimeSignature ts
 	return img_result;
 }
 
+//sets BufferedImage for time signature
 public static BufferedImage bufImgSetter(int condition, URL ts1, URL ts2, URL ts3,URL ts4,URL ts5,URL ts6,URL ts7,URL ts8,URL ts9) throws IOException
 {
 	BufferedImage img;
@@ -1581,8 +1315,6 @@ public static BufferedImage bufImgSetter(int condition, URL ts1, URL ts2, URL ts
 	default: img = ImageIO.read(ts1); return img; //shouldn't happen
 }
 }
-//used to dynamically create a string to call the saved file of music sheet
-//not in current use
 
 //gets rhythm conversion from XML file
 public static double [] getTimeSignatureXml() throws ParserConfigurationException, SAXException, IOException
@@ -1619,6 +1351,7 @@ public static double [] getTimeSignatureXml() throws ParserConfigurationExceptio
 	
 }
 
+// names png file before saving
 public static String fileNamer()
 {
 	String name = "";
@@ -1629,7 +1362,7 @@ public static String fileNamer()
 }
 
 
-
+//counts amount of instances of user input words that appear in a wordlist
 public static int wordlistCounter(String filename, String user_input)
 {
 	int count =0;
@@ -1651,7 +1384,7 @@ public static int wordlistCounter(String filename, String user_input)
 	 return count;
 }
 
-//output, scale to use 
+//outputs, scale to use for music sheet 
 public static String [] scaleChooser(String user_input)
 {
 	
