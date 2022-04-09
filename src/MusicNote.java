@@ -392,9 +392,10 @@ public class MusicNote {
 	            	list_of_notes.get(i).setrhythm("eighth");
 	            	measure_size_c += 1;
 	            	}
-	            else
+	            else //for an undefined character
 	            	{
-	            		// do nothing
+	            	list_of_notes.get(i).setrhythm("eighth");
+	            	measure_size_c += 1;
 	            	} 
 	        i2++;   
 	        }

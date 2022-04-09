@@ -18,15 +18,16 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,9 +38,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import java.lang.Double;
-
 
 public class SentenceIN {
 	
@@ -67,44 +65,6 @@ public class SentenceIN {
 		startGraphics(f,p);
 		
 		}
-
-	// plays sound of a single note for correct duration (rhythm)
-	public static int playSound(MusicNote note, TimeSignature ts, boolean flag, int counter){ //plays sounds
-		try{
-			
-			Clip clip;
-			AudioInputStream ais = AudioSystem.getAudioInputStream(SentenceIN.class.getResourceAsStream(note.getpath()));
-			clip = AudioSystem.getClip();
-	        clip.open(ais);
-	        clip.start();
-	        double ts_value = ts.gettop_number() / ts.getbottom_number();
-	        int whole_value = (int) (8000 * ts_value);
-	        int half_value = (int) (4000 * ts_value);
-	        int quarter_value = (int) (2000 * ts_value);
-	        int eighth_value = (int) (1000 * ts_value);
-	        switch(note.getrhythm())
-	        {
-	        case "whole": Thread.sleep(whole_value); counter+= whole_value; break;
-	        case "half":  Thread.sleep(half_value); counter+= half_value; break;
-	        case "quarter": Thread.sleep(quarter_value);counter+= quarter_value; break;
-	        case "eighth":  Thread.sleep(eighth_value); counter+= eighth_value; break;
-	        default: break;
-	        }
-	        System.out.println("Note: " + note.getlabel() + note.getoctave()+ " path: " + note.getpath() + "\n");
-	        if(flag)
-	        {
-	        //clip.stop();
-	        }
-	        clip.stop();
-	        return counter;
-		}
-		catch (Exception e) {
-			System.err.println(e.getMessage() + "something wrong with sound");
-		}
-		
-		return counter; //shouldn't happen
-		
-	}
 
 //creates starting graphics 
 public static void startGraphics(JFrame frame, JPanel panel)
@@ -149,23 +109,6 @@ try {
 	e4.printStackTrace();
 }
 
-//record creation modal
-JInternalFrame i_frame = new JInternalFrame("Record", false, true);
-i_frame.setName("Music Encoder");
-i_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-i_frame.reshape(400,250,300,300); 
-i_frame.setResizable(false); // necessary for absolute positioning
-
-JPanel i_panel = new JPanel();
-i_panel.setLayout(null);
-i_panel.setBackground(Color.darkGray);
-
-//Make new record
-JButton new_record_button = new JButton("Create New Record");
-new_record_button.setBounds(30,350,200, 30);
-
-i_frame.add(i_panel);
-i_frame.setVisible(false);
 
 //JComponent first jlabel for measures_panel
 URL ts_url = SentenceIN.class.getResource("/clef_and_time_signature.png");
@@ -212,45 +155,95 @@ URL ts7 = SentenceIN.class.getResource("/ts_7.png");
 URL ts8 = SentenceIN.class.getResource("/ts_8.png");
 URL ts9 = SentenceIN.class.getResource("/ts_9.png");
 
+//add logos
+URL logo_name_url = SentenceIN.class.getResource("/encoder_name.png");
+ImageIcon i_logo_name = new ImageIcon(logo_name_url);
+JLabel logo_name_label = new JLabel(i_logo_name);
+logo_name_label.setBounds(250,10,500,80);
+
+URL logo1_url = SentenceIN.class.getResource("/encoder_logo1.png");
+ImageIcon i_logo1 = new ImageIcon(logo1_url);
+JLabel logo1_label = new JLabel(i_logo1);
+logo1_label.setBounds(25,65,150, 79);
+
+URL logo2_url = SentenceIN.class.getResource("/encoder_logo2.png");
+ImageIcon i_logo2 = new ImageIcon(logo2_url);
+JLabel logo2_label = new JLabel(i_logo2);
+logo2_label.setBounds(825,65,150,79);
+
+//fonts and borders
+Font font4 = new Font(Font.MONOSPACED, Font.PLAIN, 20);
+Border border = BorderFactory.createLineBorder(Color.cyan, 10);
+Border border2 = BorderFactory.createLineBorder(Color.cyan, 2);
 // JComponent to accept user input (for newmessage)
-JTextField userInput = new JTextField("");
-userInput.setBounds(100,200,100, 30);
+JTextField userInput = new JTextField(null);
+userInput.setBounds(80,250,100, 30);
+userInput.setBackground(Color.black);
+userInput.setForeground(Color.green);
+userInput.setBorder(border2);
 
 //JComponent to display current message being encoded to music
-JTextField userInput_display = new JTextField("");
-userInput_display.setBounds(200,50,600,100);
+JTextField userInput_display = new JTextField(null);
+userInput_display.setBounds(200,125,600,100);
 userInput_display.setEditable(false);
-userInput_display.setFont(new java.awt.Font("Default",Font.PLAIN,20));
+userInput_display.setBackground(Color.black);
+userInput_display.setForeground(Color.green);
 userInput_display.setHorizontalAlignment(JTextField.CENTER);
+userInput_display.setBorder(border);
+userInput_display.setFont(font4);
 
 //Make the notes appear on sheet and get ready for music to be played
 JButton generate_music_button = new JButton("Generate Music");
 generate_music_button.setBounds(30,300,200, 30);
-
+generate_music_button.setBackground(Color.cyan);
+generate_music_button.setForeground(Color.black);
+generate_music_button.setOpaque(true);
+generate_music_button.setBorderPainted(false);
 //clears music being displayed
 JButton clear_music_button = new JButton("Clear Music");
-clear_music_button.setBounds(30,250,200, 30);
-
+clear_music_button.setBounds(30,350,200, 30);
+clear_music_button.setBackground(Color.cyan);
+clear_music_button.setForeground(Color.black);
+clear_music_button.setOpaque(true);
+clear_music_button.setBorderPainted(false);
+clear_music_button.setVisible(false); //invisible when until music generated
 //load file
 JButton load_button = new JButton("Load a File");
-load_button.setBounds(30,500,200, 30);
+load_button.setBounds(30,400,200, 30);
+load_button.setBackground(Color.cyan);
+load_button.setForeground(Color.black);
+load_button.setOpaque(true);
+load_button.setBorderPainted(false);
 
 //save music sheet
 JButton save_sheet_button = new JButton("Save PNG of Music Sheet");
-save_sheet_button.setBounds(30,550,200, 30);
+save_sheet_button.setBounds(30,450,200, 30);
+save_sheet_button.setBackground(Color.cyan);
+save_sheet_button.setForeground(Color.black);
+save_sheet_button.setOpaque(true);
+save_sheet_button.setBorderPainted(false);
+save_sheet_button.setVisible(false); //invisible when until music generated
 
 //play music button
 JButton play_button = new JButton("Play");
-play_button.setBounds(500,600,200, 30);
+play_button.setBounds(400,600,200, 30);
+play_button.setBackground(Color.green);
+play_button.setForeground(Color.black);
+play_button.setOpaque(true);
+play_button.setBorderPainted(false);
 play_button.setVisible(false); //invisible when until music generated
 
 //exit (idk if neccessary)
 JButton exit_button = new JButton("Exit");
+exit_button.setBounds(30,500,200, 30);
+exit_button.setBackground(Color.cyan);
 exit_button.setForeground(Color.red);
-exit_button.setBounds(30,600,200, 30);
+exit_button.setOpaque(true);
+exit_button.setBorderPainted(false);
 
-
-panel.add(i_frame);
+panel.add(logo_name_label);
+panel.add(logo1_label);
+panel.add(logo2_label);
 panel.add(userInput);
 panel.add(userInput_display);
 panel.add(generate_music_button);
@@ -274,21 +267,23 @@ generate_music_button.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e)
 	{
 		String u_input = null;
-		
-		u_input = (String)userInput.getText(); //gets text from textfield
-		
-		
+		u_input = userInput.getText(); //gets text from textfield
+				
 		if(u_input == null)
 			{
+			System.out.println("\nexit");
 				return;// exit method
 			}
 		
 		else
 			{
-			
+			System.out.println("\ncontinue");
 		
 			userInput_display.setText(u_input);
-		
+			save_sheet_button.setVisible(true);
+			load_button.setVisible(false);
+			generate_music_button.setVisible(false);
+			clear_music_button.setVisible(true);
 			//sets Newmessage
 			for(int count = 0;count < u_input.length(); count++)
 				{
@@ -501,6 +496,12 @@ clear_music_button.addActionListener(new ActionListener() {
 		measures_panel.revalidate();
 		measures_panel.repaint();
 		play_button.setVisible(false);
+		save_sheet_button.setVisible(false);
+		load_button.setVisible(true);
+		generate_music_button.setVisible(true);
+		clear_music_button.setVisible(false);
+		userInput_display.setText(null); 
+		userInput.setText(null);
 		
 	}
 });
@@ -719,7 +720,11 @@ load_button.addActionListener(new ActionListener() {
 			} //sets buffered image
 			
 			//panel.add(music_sheet);
+			generate_music_button.setVisible(false);
+			load_button.setVisible(false);
 			play_button.setVisible(true);
+			save_sheet_button.setVisible(true);
+			clear_music_button.setVisible(true);
 			System.out.println("Components in panel: " + measures_panel.getComponentCount());
 			panel.repaint();
 			
@@ -760,7 +765,7 @@ save_sheet_button.addActionListener(new ActionListener() {
 		panel.add(save_file);
 		panel.repaint();
 		
-		int fc_result = save_file.showSaveDialog(i_frame);
+		int fc_result = save_file.showSaveDialog(save_file);
 		if (fc_result == JFileChooser.APPROVE_OPTION) 
 		{
 			String name_input = null;
@@ -834,6 +839,43 @@ exit_button.addActionListener(new ActionListener() {
 });
 }
 
+//plays sound of a single note for correct duration (rhythm)
+	public static int playSound(MusicNote note, TimeSignature ts, boolean flag, int counter){ //plays sounds
+		try{
+			
+			Clip clip;
+			AudioInputStream ais = AudioSystem.getAudioInputStream(SentenceIN.class.getResourceAsStream(note.getpath()));
+			clip = AudioSystem.getClip();
+	        clip.open(ais);
+	        clip.start();
+	        double ts_value = ts.gettop_number() / ts.getbottom_number();
+	        int whole_value = (int) (8000 * ts_value);
+	        int half_value = (int) (4000 * ts_value);
+	        int quarter_value = (int) (2000 * ts_value);
+	        int eighth_value = (int) (1000 * ts_value);
+	        switch(note.getrhythm())
+	        {
+	        case "whole": Thread.sleep(whole_value); counter+= whole_value; break;
+	        case "half":  Thread.sleep(half_value); counter+= half_value; break;
+	        case "quarter": Thread.sleep(quarter_value);counter+= quarter_value; break;
+	        case "eighth":  Thread.sleep(eighth_value); counter+= eighth_value; break;
+	        default: break;
+	        }
+	        System.out.println("Note: " + note.getlabel() + note.getoctave()+ " path: " + note.getpath() + "\n");
+	        if(flag)
+	        {
+	        //clip.stop();
+	        }
+	        clip.stop();
+	        return counter;
+		}
+		catch (Exception e) {
+			System.err.println(e.getMessage() + "something wrong with sound");
+		}
+		
+		return counter; //shouldn't happen
+		
+	}
 
 /* return: 
  * int array should always be of size 5: 
